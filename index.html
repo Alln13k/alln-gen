@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AllnGen - Générateur Premium Valorant</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
@@ -655,21 +657,47 @@
         }
 
         /* ============================================================
-           RESPONSIVE
+           RESPONSIVE - OPTIMISATIONS MOBILE
            ============================================================ */
         @media (max-width: 768px) {
-            .navbar-links {
+            /* Désactivation complète des particules */
+            #particles-canvas {
                 display: none;
             }
-            .navbar-cta-desktop {
-                display: none;
+
+            /* Halos allégés */
+            .glow-halo {
+                filter: blur(30px);
+                opacity: 0.4;
             }
-            .navbar-burger {
-                display: block;
+            .glow-halo-1 { width: 300px; height: 300px; top: -100px; left: -100px; }
+            .glow-halo-2 { width: 400px; height: 400px; bottom: -150px; right: -150px; }
+            .glow-halo-3 { display: none; }
+
+            /* Désactivation des animations lourdes */
+            .hero-title {
+                animation: none;
+                text-shadow: 0 0 20px rgba(255,23,68,0.5);
             }
-            .hero-buttons {
-                flex-direction: column;
+            .animate-fade-in-up {
+                animation: none;
+                opacity: 1;
             }
+            .navbar.scrolled {
+                backdrop-filter: none;
+                background: rgba(0,0,0,0.95);
+            }
+            .feature-card, .faq-item {
+                backdrop-filter: none;
+            }
+
+            /* Navbar */
+            .navbar-links { display: none; }
+            .navbar-cta-desktop { display: none; }
+            .navbar-burger { display: block; }
+
+            /* Hero */
+            .hero-buttons { flex-direction: column; }
             .hero-btn-primary, .hero-btn-secondary {
                 width: 100%;
                 justify-content: center;
@@ -678,12 +706,9 @@
                 grid-template-columns: 1fr 1fr 1fr;
                 gap: 8px;
             }
-            .hero-stat {
-                padding: 12px;
-            }
-            .hero-stat-value {
-                font-size: 1.25rem;
-            }
+            .hero-stat { padding: 12px; }
+            .hero-stat-value { font-size: 1.25rem; }
+
             .footer-inner {
                 flex-direction: column;
                 text-align: center;
@@ -691,22 +716,11 @@
         }
 
         @media (max-width: 480px) {
-            .hero-stats {
-                grid-template-columns: 1fr;
-            }
-            .section {
-                padding: 60px 16px;
-            }
-            .hero {
-                padding: 80px 16px 20px;
-            }
-            .hero-title {
-                font-size: 3rem;
-            }
-            .hero-subtitle {
-                font-size: 1rem;
-                margin-bottom: 30px;
-            }
+            .hero-stats { grid-template-columns: 1fr; }
+            .section { padding: 60px 16px; }
+            .hero { padding: 80px 16px 20px; }
+            .hero-title { font-size: 3rem; }
+            .hero-subtitle { font-size: 1rem; margin-bottom: 30px; }
         }
     </style>
 </head>
@@ -818,36 +832,28 @@
         <div class="features-grid">
             <div class="feature-card animate-fade-in-up" style="animation-delay: 0s;">
                 <div class="feature-icon">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                        <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
-                    </svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
                 </div>
                 <h3 class="feature-title">Génération rapide</h3>
                 <p class="feature-description">Récupérez instantanément un compte depuis notre base de données optimisée.</p>
             </div>
             <div class="feature-card animate-fade-in-up" style="animation-delay: 0.1s;">
                 <div class="feature-icon">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                        <path d="M21 6h-2v9H6v2c0 .55.45 1 1 1h11l4 4V7c0-.55-.45-1-1-1zm-4 6V3c0-.55-.45-1-1-1H3c-.55 0-1 .45-1 1v14l4-4h10c.55 0 1-.45 1-1z"/>
-                    </svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 6h-2v9H6v2c0 .55.45 1 1 1h11l4 4V7c0-.55-.45-1-1-1zm-4 6V3c0-.55-.45-1-1-1H3c-.55 0-1 .45-1 1v14l4-4h10c.55 0 1-.45 1-1z"/></svg>
                 </div>
                 <h3 class="feature-title">Comptes Valorant</h3>
                 <p class="feature-description">Identifiants et mots de passe vérifiés pour le jeu Valorant.</p>
             </div>
             <div class="feature-card animate-fade-in-up" style="animation-delay: 0.2s;">
                 <div class="feature-icon">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                        <path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/>
-                    </svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg>
                 </div>
                 <h3 class="feature-title">Base sécurisée</h3>
                 <p class="feature-description">Connexion chiffrée via Supabase. Aucune donnée sensible exposée.</p>
             </div>
             <div class="feature-card animate-fade-in-up" style="animation-delay: 0.3s;">
                 <div class="feature-icon">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                        <path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 14H4V6h16v12zM6 8h12v2H6V8zm0 4h12v2H6v-2zm0 4h8v2H6v-2z"/>
-                    </svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 14H4V6h16v12zM6 8h12v2H6V8zm0 4h12v2H6v-2zm0 4h8v2H6v-2z"/></svg>
                 </div>
                 <h3 class="feature-title">Copie facile</h3>
                 <p class="feature-description">Copiez identifiant et mot de passe en un clic pour une utilisation rapide.</p>
@@ -867,9 +873,7 @@
             <div class="faq-item open animate-fade-in-up">
                 <button class="faq-question">
                     Comment récupérer un compte ?
-                    <svg class="faq-chevron" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                        <path d="M19 9l-7 7-7-7"/>
-                    </svg>
+                    <svg class="faq-chevron" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 9l-7 7-7-7"/></svg>
                 </button>
                 <div class="faq-answer">
                     <p>Cliquez sur "Générer un compte" et le système récupérera automatiquement un compte disponible depuis la base de données.</p>
@@ -878,9 +882,7 @@
             <div class="faq-item animate-fade-in-up" style="animation-delay: 0.1s;">
                 <button class="faq-question">
                     Les comptes sont-ils valides ?
-                    <svg class="faq-chevron" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                        <path d="M19 9l-7 7-7-7"/>
-                    </svg>
+                    <svg class="faq-chevron" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 9l-7 7-7-7"/></svg>
                 </button>
                 <div class="faq-answer">
                     <p>Les comptes sont vérifiés et stockés dans notre base de données sécurisée. Nous garantissons leur validité.</p>
@@ -889,9 +891,7 @@
             <div class="faq-item animate-fade-in-up" style="animation-delay: 0.2s;">
                 <button class="faq-question">
                     Combien de comptes puis-je générer ?
-                    <svg class="faq-chevron" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                        <path d="M19 9l-7 7-7-7"/>
-                    </svg>
+                    <svg class="faq-chevron" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 9l-7 7-7-7"/></svg>
                 </button>
                 <div class="faq-answer">
                     <p>Le nombre de comptes disponibles dépend du stock en base de données. Consultez régulièrement le générateur.</p>
@@ -900,9 +900,7 @@
             <div class="faq-item animate-fade-in-up" style="animation-delay: 0.3s;">
                 <button class="faq-question">
                     Le service est-il gratuit ?
-                    <svg class="faq-chevron" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                        <path d="M19 9l-7 7-7-7"/>
-                    </svg>
+                    <svg class="faq-chevron" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 9l-7 7-7-7"/></svg>
                 </button>
                 <div class="faq-answer">
                     <p>Oui, le générateur est 100% gratuit et le restera.</p>
@@ -916,9 +914,7 @@
          ============================================================ -->
     <footer class="footer">
         <div class="footer-inner">
-            <div class="footer-logo">
-                Alln<span>Gen</span>
-            </div>
+            <div class="footer-logo">Alln<span>Gen</span></div>
             <div class="footer-copy">© 2024 AllnGen. Tous droits réservés.</div>
             <div class="footer-links">
                 <a href="#">Mentions légales</a>
@@ -932,9 +928,12 @@
          ============================================================ -->
     <script>
         // ============================================================
-        // PARTICULES BACKGROUND
+        // PARTICULES BACKGROUND (désactivées sur mobile via CSS)
         // ============================================================
         (function() {
+            const isMobile = window.innerWidth < 768;
+            if (isMobile) return; // Ne pas initialiser les particules sur mobile
+
             const canvas = document.getElementById('particles-canvas');
             const ctx = canvas.getContext('2d');
             let particles = [];
@@ -943,13 +942,17 @@
             let mouseY = -100;
 
             function resizeCanvas() {
-                canvas.width = window.innerWidth;
-                canvas.height = window.innerHeight;
+                const dpr = Math.min(window.devicePixelRatio || 1, 2);
+                canvas.width = window.innerWidth * dpr;
+                canvas.height = window.innerHeight * dpr;
+                canvas.style.width = window.innerWidth + 'px';
+                canvas.style.height = window.innerHeight + 'px';
+                ctx.scale(dpr, dpr);
                 createParticles();
             }
 
             function createParticles() {
-                const particleCount = Math.floor((canvas.width * canvas.height) / 15000);
+                const particleCount = Math.floor((canvas.width * canvas.height) / 30000);
                 particles = [];
                 for (let i = 0; i < particleCount; i++) {
                     particles.push({

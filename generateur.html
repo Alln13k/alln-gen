@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AllnGen - Générateur de comptes Valorant</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
@@ -116,10 +118,18 @@
         .footer-links { display: flex; gap: 24px; }
         .footer-links a { color: #999; text-decoration: none; font-size: 0.85rem; transition: color 0.2s; }
         .footer-links a:hover { color: #fff; }
+
         @media (max-width: 768px) {
+            #particles-canvas { display: none; }
+            .glow-halo { filter: blur(30px); opacity: 0.4; }
+            .glow-halo-1 { width: 300px; height: 300px; top: -100px; left: -100px; }
+            .glow-halo-2 { width: 400px; height: 400px; bottom: -150px; right: -150px; }
+            .hero-title { animation: none; text-shadow: 0 0 20px rgba(255,23,68,0.5); }
+            .animate-fade-in-up { animation: none; opacity: 1; }
+            .navbar.scrolled { backdrop-filter: none; background: rgba(0,0,0,0.95); }
+            .generator-card { backdrop-filter: none; padding: 32px 20px; }
             .navbar-links { display: none; }
             .navbar-burger { display: block; }
-            .generator-card { padding: 32px 20px; }
             .footer-inner { flex-direction: column; text-align: center; }
         }
     </style>
@@ -245,7 +255,6 @@
         let cooldownInterval = null;
 
         async function init() {
-            console.log('init démarré');
             try {
                 const res = await fetch('/api/auth/me', { credentials: 'include' });
                 if (res.ok) {
@@ -506,20 +515,27 @@
             resultContainer.classList.add('show');
         }
 
-        // Particules
+        // Particules uniquement sur desktop
         (function() {
+            const isMobile = window.innerWidth < 768;
+            if (isMobile) return;
+
             const canvas = document.getElementById('particles-canvas');
             const ctx = canvas.getContext('2d');
             let particles = [];
             let animationFrameId;
             let mouseX = -100, mouseY = -100;
             function resizeCanvas() {
-                canvas.width = window.innerWidth;
-                canvas.height = window.innerHeight;
+                const dpr = Math.min(window.devicePixelRatio || 1, 2);
+                canvas.width = window.innerWidth * dpr;
+                canvas.height = window.innerHeight * dpr;
+                canvas.style.width = window.innerWidth + 'px';
+                canvas.style.height = window.innerHeight + 'px';
+                ctx.scale(dpr, dpr);
                 createParticles();
             }
             function createParticles() {
-                const particleCount = Math.floor((canvas.width * canvas.height) / 15000);
+                const particleCount = Math.floor((canvas.width * canvas.height) / 30000);
                 particles = [];
                 for (let i = 0; i < particleCount; i++) {
                     particles.push({
