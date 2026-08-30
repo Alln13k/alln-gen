@@ -7,6 +7,9 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
+        /* ============================================================
+           RESET & BASE
+           ============================================================ */
         * {
             margin: 0;
             padding: 0;
@@ -271,14 +274,27 @@
         .generator-icon {
             width: 80px;
             height: 80px;
-            border-radius: 20px;
+            border-radius: 50%;
             background: linear-gradient(135deg, #ff1744, #b71c1c);
             display: flex;
             align-items: center;
             justify-content: center;
             margin: 0 auto 24px;
             box-shadow: 0 10px 40px rgba(255,23,68,0.4);
-            font-size: 2.5rem;
+            animation: pulseGlow 2s infinite alternate;
+        }
+        .generator-icon svg {
+            width: 40px;
+            height: 40px;
+            stroke: #fff;
+            stroke-width: 2;
+            fill: none;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+        @keyframes pulseGlow {
+            0% { box-shadow: 0 0 20px rgba(255,23,68,0.4); }
+            100% { box-shadow: 0 0 40px rgba(255,23,68,0.8); }
         }
         .generator-title {
             font-size: 2rem;
@@ -309,18 +325,20 @@
             align-items: center;
             gap: 8px;
             box-shadow: 0 4px 15px rgba(88,101,242,0.4);
+            text-decoration: none;
         }
         .auth-btn:hover {
             background: #4752c4;
             box-shadow: 0 6px 25px rgba(88,101,242,0.6);
             transform: scale(1.03);
         }
-        .auth-btn.logout {
-            background: #333;
-            box-shadow: none;
+        .logout-btn {
+            background: #ff1744;
+            box-shadow: 0 4px 15px rgba(255,23,68,0.4);
         }
-        .auth-btn.logout:hover {
-            background: #444;
+        .logout-btn:hover {
+            background: #cc0033;
+            box-shadow: 0 6px 25px rgba(255,23,68,0.6);
         }
         .user-info {
             color: #999;
@@ -329,6 +347,13 @@
         .user-info span {
             color: #fff;
             font-weight: 600;
+        }
+        .avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            margin-right: 8px;
+            vertical-align: middle;
         }
         .generator-btn {
             width: 100%;
@@ -350,7 +375,6 @@
         }
         .generator-btn:hover {
             background: #ff3355;
-            box-shadow: 0 8px 40px rgba(255,23,68,0.7);
             transform: scale(1.02);
         }
         .generator-btn:active {
@@ -409,7 +433,6 @@
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s;
-            font-family: 'Inter', sans-serif;
             background: rgba(255,255,255,0.1);
             color: #fff;
         }
@@ -418,7 +441,6 @@
         }
         .result-copy-btn.copied {
             background: #4caf50;
-            color: #fff;
         }
         .result-field {
             display: flex;
@@ -456,6 +478,12 @@
             background: rgba(0,0,0,0.5);
             border: 1px solid rgba(255,23,68,0.6);
             border-radius: 16px;
+        }
+        .cooldown-timer {
+            color: #ff1744;
+            font-weight: 700;
+            margin-top: 8px;
+            display: none;
         }
         .footer {
             position: relative;
@@ -550,13 +578,22 @@
     <section class="generator-section">
         <div class="generator-container">
             <div class="generator-card animate-fade-in-up">
-                <div class="generator-icon">🎮</div>
+                <!-- Icône circulaire avec flèches -->
+                <div class="generator-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <path d="M4 12a8 8 0 0 1 13.66-5.66L20 8" />
+                        <path d="M20 4v4h-4" />
+                        <path d="M20 12a8 8 0 0 1-13.66 5.66L4 16" />
+                        <path d="M4 20v-4h4" />
+                    </svg>
+                </div>
                 <h1 class="generator-title">Générateur de comptes</h1>
-                <p class="generator-subtitle">Connectez-vous avec Discord pour générer un compte Valorant. Limite : 1 compte par utilisateur.</p>
+                <p class="generator-subtitle">Connectez-vous avec Discord pour générer un compte Valorant. Limite : 1 compte par utilisateur, cooldown 30 secondes.</p>
 
                 <div class="auth-container" id="auth-container"></div>
 
                 <button class="generator-btn" id="generate-btn" style="display: none;">⚡ Générer un compte</button>
+                <div class="cooldown-timer" id="cooldown-timer"></div>
 
                 <div class="result-container" id="result-container">
                     <div class="result-box" id="result-box">
@@ -599,12 +636,19 @@
     </footer>
 
     <script>
+        // ============================================================
+        // CONFIGURATION SUPABASE
+        // ============================================================
         const SUPABASE_URL = 'https://qtuoqwqyhtbpkwzlnnjr.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF0dW9xd3F5aHRicGt3emxubmpyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgwMzQxNDMsImV4cCI6MjEwMzYxMDE0M30.nSnePp8o37raK47x0PKMx5K-ujiibWlE4JJbZ5WbUvo';
-        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+        // ============================================================
+        // ÉLÉMENTS DOM
+        // ============================================================
         const authContainer = document.getElementById('auth-container');
         const generateBtn = document.getElementById('generate-btn');
+        const cooldownTimer = document.getElementById('cooldown-timer');
         const resultContainer = document.getElementById('result-container');
         const resultBox = document.getElementById('result-box');
         const resultStatus = document.getElementById('result-status');
@@ -614,68 +658,171 @@
         const resultLevel = document.getElementById('result-level');
         const resultError = document.getElementById('result-error');
         const copyBtn = document.getElementById('copy-btn');
-        let lastAccount = null;
-        let currentUser = null;
 
-        async function checkAuth() {
-        console.log('checkAuth démarré');
-        try {
-            const { data: { user }, error } = await supabase.auth.getUser();
-            console.log('Résultat getUser:', user, error);
-            if (error) throw error;
-            if (user) {
-                currentUser = user;
-                const name = user.user_metadata?.full_name || user.user_metadata?.name || user.email || 'Utilisateur Discord';
-                authContainer.innerHTML = `<div class="user-info">Connecté en tant que <span>${name}</span> <button class="auth-btn logout" id="logout-btn">Déconnexion</button></div>`;
-                document.getElementById('logout-btn').addEventListener('click', logout);
-                generateBtn.style.display = 'block';
-            } else {
-                authContainer.innerHTML = `<button class="auth-btn" id="login-btn">Se connecter avec Discord</button>`;
-                document.getElementById('login-btn').addEventListener('click', loginWithDiscord);
+        let currentUser = null;
+        let lastAccount = null;
+        let cooldownInterval = null;
+
+        // URL du bouton de connexion Discord (redirection vers le backend)
+        const DISCORD_AUTH_URL = 'https://discord.com/oauth2/authorize?client_id=1543386953163083786&response_type=code&redirect_uri=https%3A%2F%2Falln-gen.vercel.app%2Fapi%2Fauth%2Fdiscord%2Fcallback&scope=identify';
+
+        // ============================================================
+        // INITIALISATION
+        // ============================================================
+        async function init() {
+            console.log('init démarré');
+            try {
+                // Vérifier la session via l'API backend
+                const res = await fetch('/api/auth/me', { credentials: 'include' });
+                if (res.ok) {
+                    const data = await res.json();
+                    currentUser = data.user;
+                    displayUser();
+                    await checkUserLimit();
+                    startCooldownCheck();
+                } else {
+                    displayLoginButton();
+                    generateBtn.style.display = 'none';
+                }
+            } catch (e) {
+                console.error('Erreur init:', e);
+                displayLoginButton();
                 generateBtn.style.display = 'none';
             }
-        } catch (e) {
-            console.error('Erreur dans checkAuth:', e);
-            // Fallback : afficher le bouton de connexion même en cas d'erreur
-            authContainer.innerHTML = `<button class="auth-btn" id="login-btn">Se connecter avec Discord</button>`;
-            document.getElementById('login-btn').addEventListener('click', loginWithDiscord);
-            generateBtn.style.display = 'none';
         }
-    }
 
-        async function loginWithDiscord() {
-            const { data, error } = await supabase.auth.signInWithOAuth({
-                provider: 'discord',
-                options: { redirectTo: window.location.href }
-            });
-            if (error) console.error('Erreur de connexion Discord:', error);
+        // ============================================================
+        // AFFICHAGE
+        // ============================================================
+        function displayLoginButton() {
+            authContainer.innerHTML = `
+                <a href="${DISCORD_AUTH_URL}" class="auth-btn">
+                    Se connecter avec Discord
+                </a>
+            `;
+        }
+
+        function displayUser() {
+            const name = currentUser.global_name || currentUser.username;
+            // L'avatar est déjà une URL complète (avec extension .gif ou .png) fournie par le backend
+            const avatar = currentUser.avatar || 'https://cdn.discordapp.com/embed/avatars/0.png';
+            authContainer.innerHTML = `
+                <div class="user-info">
+                    <img src="${avatar}" class="avatar" alt="Avatar">
+                    Connecté en tant que <span>${name}</span>
+                    <button class="auth-btn logout-btn" id="logout-btn" style="margin-left:10px;">Déconnexion</button>
+                </div>
+            `;
+            document.getElementById('logout-btn').addEventListener('click', logout);
+            generateBtn.style.display = 'block';
         }
 
         async function logout() {
-            await supabase.auth.signOut();
-            checkAuth();
-            resultContainer.classList.remove('show');
+            try {
+                await fetch('/api/auth/logout', { credentials: 'include' });
+            } catch (e) {
+                console.error('Erreur logout:', e);
+            }
+            // Recharger la page pour afficher le bouton de connexion
+            window.location.reload();
         }
 
-        async function generateAccount() {
-            if (!currentUser) {
-                alert('Veuillez vous connecter avec Discord.');
+        // ============================================================
+        // VÉRIFICATION LIMITE UTILISATEUR
+        // ============================================================
+        async function checkUserLimit() {
+            if (!currentUser) return;
+            try {
+                const { data: logs, error } = await supabaseClient
+                    .from('generation_logs')
+                    .select('id')
+                    .eq('discord_user_id', currentUser.id)
+                    .limit(1);
+                if (error) {
+                    console.error('Erreur vérification limite:', error);
+                    showError('Erreur de vérification de la limite.');
+                    generateBtn.disabled = true;
+                    return;
+                }
+                if (logs && logs.length > 0) {
+                    generateBtn.disabled = true;
+                    generateBtn.textContent = '❌ Limite atteinte (1 compte max)';
+                    cooldownTimer.style.display = 'none';
+                    if (cooldownInterval) clearInterval(cooldownInterval);
+                } else {
+                    generateBtn.disabled = false;
+                    generateBtn.textContent = '⚡ Générer un compte';
+                }
+            } catch (e) {
+                console.error('Exception checkUserLimit:', e);
+                showError('Erreur lors de la vérification de limite.');
+                generateBtn.disabled = true;
+            }
+        }
+
+        // ============================================================
+        // COOLDOWN 30 SECONDES
+        // ============================================================
+        function startCooldownCheck() {
+            const lastGenTime = parseInt(localStorage.getItem('last_gen_time') || '0');
+            const now = Date.now();
+            const elapsed = now - lastGenTime;
+            const cooldownMs = 30000;
+            if (elapsed < cooldownMs) {
+                const remaining = Math.ceil((cooldownMs - elapsed) / 1000);
+                disableWithCooldown(remaining);
+            } else {
+                cooldownTimer.style.display = 'none';
+            }
+        }
+
+        function disableWithCooldown(seconds) {
+            generateBtn.disabled = true;
+            cooldownTimer.style.display = 'block';
+            cooldownTimer.textContent = `Cooldown : ${seconds}s`;
+            if (cooldownInterval) clearInterval(cooldownInterval);
+            cooldownInterval = setInterval(() => {
+                seconds--;
+                if (seconds <= 0) {
+                    clearInterval(cooldownInterval);
+                    cooldownTimer.style.display = 'none';
+                    checkUserLimit();
+                } else {
+                    cooldownTimer.textContent = `Cooldown : ${seconds}s`;
+                }
+            }, 1000);
+        }
+
+        // ============================================================
+        // GÉNÉRATION DE COMPTE
+        // ============================================================
+        generateBtn.addEventListener('click', async () => {
+            if (!currentUser) return;
+            if (generateBtn.disabled) return;
+
+            const lastGenTime = parseInt(localStorage.getItem('last_gen_time') || '0');
+            const now = Date.now();
+            if (now - lastGenTime < 30000) {
+                const remaining = Math.ceil((30000 - (now - lastGenTime)) / 1000);
+                disableWithCooldown(remaining);
                 return;
             }
 
-            const { data: logs, error: logError } = await supabase
-                .from('generation_logs')
-                .select('id')
-                .eq('discord_user_id', currentUser.id)
-                .limit(1);
-
-            if (logError) {
-                showError('Erreur lors de la vérification de votre limite.');
-                return;
-            }
-
-            if (logs && logs.length > 0) {
-                showError('Vous avez déjà généré un compte. Limite atteinte (1 par utilisateur).');
+            try {
+                const { data: logs, error: logError } = await supabaseClient
+                    .from('generation_logs')
+                    .select('id')
+                    .eq('discord_user_id', currentUser.id)
+                    .limit(1);
+                if (logError) throw logError;
+                if (logs && logs.length > 0) {
+                    generateBtn.disabled = true;
+                    generateBtn.textContent = '❌ Limite atteinte (1 compte max)';
+                    return;
+                }
+            } catch (e) {
+                console.error('Erreur vérification limite:', e);
+                showError('Erreur de vérification de limite.');
                 return;
             }
 
@@ -693,17 +840,14 @@
                         'Content-Type': 'application/json'
                     }
                 });
-
                 if (!fetchResponse.ok) {
                     const errorData = await fetchResponse.json();
-                    throw new Error(errorData.message || 'Erreur lors de la récupération');
+                    throw new Error(errorData.message || 'Erreur de récupération');
                 }
-
                 const accounts = await fetchResponse.json();
                 if (!accounts || accounts.length === 0) {
                     throw new Error('Aucun compte disponible dans la base.');
                 }
-
                 const account = accounts[0];
                 lastAccount = account;
 
@@ -716,19 +860,20 @@
                     },
                     body: JSON.stringify({ is_used: true, used_at: new Date().toISOString() })
                 });
-
                 if (!updateResponse.ok) {
                     const updateError = await updateResponse.json();
-                    throw new Error(updateError.message || 'Erreur lors de la mise à jour');
+                    throw new Error(updateError.message || 'Erreur de mise à jour');
                 }
 
-                const { error: insertLogError } = await supabase
+                const { error: insertLogError } = await supabaseClient
                     .from('generation_logs')
                     .insert([{ discord_user_id: currentUser.id, account_id: account.id }]);
 
                 if (insertLogError) {
                     console.error('Erreur enregistrement log:', insertLogError);
                 }
+
+                localStorage.setItem('last_gen_time', Date.now().toString());
 
                 resultUsername.textContent = account.username;
                 resultPassword.textContent = account.password;
@@ -743,23 +888,23 @@
                 copyBtn.classList.remove('copied');
                 resultContainer.classList.add('show');
 
+                await checkUserLimit();
+                disableWithCooldown(30);
+
             } catch (error) {
                 console.error('[AllnGen] Erreur:', error);
                 showError(error.message);
             } finally {
                 generateBtn.disabled = false;
                 generateBtn.innerHTML = '⚡ Générer un compte';
+                await checkUserLimit();
             }
-        }
+        });
 
-        function showError(message) {
-            resultBox.style.display = 'none';
-            resultError.textContent = message;
-            resultError.style.display = 'block';
-            resultContainer.classList.add('show');
-        }
-
-        async function copyAccountInfo() {
+        // ============================================================
+        // COPIE
+        // ============================================================
+        copyBtn.addEventListener('click', async () => {
             if (!lastAccount) return;
             const info = `Identifiant: ${lastAccount.username}\nMot de passe: ${lastAccount.password}\nRégion: ${lastAccount.region || 'EUW'}\nNiveau: ${lastAccount.level || 'N/A'}`;
             try {
@@ -773,30 +918,29 @@
             } catch (err) {
                 alert('Copie impossible, veuillez copier manuellement.');
             }
-        }
-
-        generateBtn.addEventListener('click', generateAccount);
-        copyBtn.addEventListener('click', copyAccountInfo);
-
-        checkAuth();
-        supabase.auth.onAuthStateChange((event, session) => {
-            checkAuth();
         });
 
+        function showError(message) {
+            resultBox.style.display = 'none';
+            resultError.textContent = message;
+            resultError.style.display = 'block';
+            resultContainer.classList.add('show');
+        }
+
+        // ============================================================
+        // PARTICULES BACKGROUND
+        // ============================================================
         (function() {
             const canvas = document.getElementById('particles-canvas');
             const ctx = canvas.getContext('2d');
             let particles = [];
             let animationFrameId;
-            let mouseX = -100;
-            let mouseY = -100;
-
+            let mouseX = -100, mouseY = -100;
             function resizeCanvas() {
                 canvas.width = window.innerWidth;
                 canvas.height = window.innerHeight;
                 createParticles();
             }
-
             function createParticles() {
                 const particleCount = Math.floor((canvas.width * canvas.height) / 15000);
                 particles = [];
@@ -812,13 +956,11 @@
                     });
                 }
             }
-
             function animate() {
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
                 particles.forEach(function(particle) {
                     particle.x += particle.speedX;
                     particle.y += particle.speedY;
-
                     const dx = particle.x - mouseX;
                     const dy = particle.y - mouseY;
                     const distance = Math.sqrt(dx * dx + dy * dy);
@@ -827,13 +969,10 @@
                         particle.x += dx * force * 0.04;
                         particle.y += dy * force * 0.04;
                     }
-
                     if (particle.x < 0 || particle.x > canvas.width) particle.speedX *= -1;
                     if (particle.y < 0 || particle.y > canvas.height) particle.speedY *= -1;
-
                     particle.x = Math.max(0, Math.min(canvas.width, particle.x));
                     particle.y = Math.max(0, Math.min(canvas.height, particle.y));
-
                     ctx.beginPath();
                     ctx.arc(particle.x, particle.y, particle.radius, 0, Math.PI * 2);
                     ctx.fillStyle = particle.color;
@@ -846,36 +985,34 @@
                 });
                 animationFrameId = requestAnimationFrame(animate);
             }
-
             window.addEventListener('resize', resizeCanvas);
             window.addEventListener('mousemove', function(e) {
                 mouseX = e.clientX;
                 mouseY = e.clientY;
             });
-
             resizeCanvas();
             animate();
         })();
 
+        // ============================================================
+        // NAVBAR
+        // ============================================================
         const navbar = document.getElementById('navbar');
-        window.addEventListener('scroll', function() {
-            if (window.scrollY > 20) {
-                navbar.classList.add('scrolled');
-            } else {
-                navbar.classList.remove('scrolled');
-            }
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 20) navbar.classList.add('scrolled');
+            else navbar.classList.remove('scrolled');
         });
-
         const burgerBtn = document.getElementById('navbar-burger');
         const mobileMenu = document.getElementById('navbar-mobile-menu');
-        burgerBtn.addEventListener('click', function() {
+        burgerBtn.addEventListener('click', () => {
             mobileMenu.classList.toggle('active');
         });
-        mobileMenu.querySelectorAll('a').forEach(function(link) {
-            link.addEventListener('click', function() {
-                mobileMenu.classList.remove('active');
-            });
+        mobileMenu.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => mobileMenu.classList.remove('active'));
         });
+
+        // Lancer l'initialisation
+        init();
     </script>
 </body>
 </html>
