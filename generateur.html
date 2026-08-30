@@ -7,6 +7,9 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
+        /* ============================================================
+           RESET & BASE
+           ============================================================ */
         * {
             margin: 0;
             padding: 0;
@@ -45,7 +48,7 @@
 
         .navbar { position: fixed; top: 0; left: 0; width: 100%; z-index: 50; transition: all 0.3s; background: transparent; }
         .navbar.scrolled { background: rgba(0,0,0,0.8); backdrop-filter: blur(20px); border-bottom: 1px solid rgba(185,28,28,0.3); }
-        .navbar-inner { max-width: 1280px; margin: 0 auto; padding: 16px 24px; display: flex; align-items: center; justify-content: space-between; }
+        .navbar-inner { max-width: 1280px; margin: 0 auto; padding: 16px 24px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; }
         .navbar-logo { display: flex; align-items: center; gap: 12px; text-decoration: none; }
         .navbar-logo-icon { width: 40px; height: 40px; border-radius: 12px; background: linear-gradient(135deg, #ff1744, #b71c1c); display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 20px rgba(255,23,68,0.3); }
         .navbar-logo-icon svg { width: 22px; height: 22px; fill: #fff; }
@@ -80,8 +83,6 @@
         .auth-btn:hover { background: #4752c4; box-shadow: 0 6px 25px rgba(88,101,242,0.6); transform: scale(1.03); }
         .logout-btn { background: #ff1744; box-shadow: 0 4px 15px rgba(255,23,68,0.4); }
         .logout-btn:hover { background: #cc0033; box-shadow: 0 6px 25px rgba(255,23,68,0.6); }
-        .history-btn { background: #333; box-shadow: none; margin-top: 16px; }
-        .history-btn:hover { background: #444; }
         .user-info { color: #999; margin-bottom: 15px; }
         .user-info span { color: #fff; font-weight: 600; }
         .avatar { width: 32px; height: 32px; border-radius: 50%; margin-right: 8px; vertical-align: middle; }
@@ -141,6 +142,7 @@
                 <a href="generateur.html" class="navbar-link active">Générateur</a>
                 <a href="index.html#fonctionnalites" class="navbar-link">Fonctionnalités</a>
                 <a href="index.html#faq" class="navbar-link">FAQ</a>
+                <button class="navbar-link" id="history-btn" style="background:none; border:none; cursor:pointer; color:#aaa; font-size:0.9rem;">Historique</button>
             </div>
             <a href="generateur.html" class="navbar-cta">Commencer</a>
             <button class="navbar-burger" id="navbar-burger">
@@ -152,6 +154,7 @@
             <a href="generateur.html">Générateur</a>
             <a href="index.html#fonctionnalites">Fonctionnalités</a>
             <a href="index.html#faq">FAQ</a>
+            <button class="navbar-link" id="history-btn-mobile" style="background:none; border:none; cursor:pointer; color:#aaa; font-size:0.9rem;">Historique</button>
             <a href="generateur.html" class="navbar-cta">Commencer</a>
         </div>
     </nav>
@@ -192,8 +195,6 @@
                     </div>
                     <div class="result-error-message" id="result-error" style="display:none;"></div>
                 </div>
-
-                <button class="generator-btn history-btn" id="history-btn" style="display:none;">📜 Historique</button>
             </div>
         </div>
     </section>
@@ -219,16 +220,10 @@
     </footer>
 
     <script>
-        // ============================================================
-        // CONFIGURATION SUPABASE
-        // ============================================================
         const SUPABASE_URL = 'https://qtuoqwqyhtbpkwzlnnjr.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF0dW9xd3F5aHRicGt3emxubmpyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgwMzQxNDMsImV4cCI6MjEwMzYxMDE0M30.nSnePp8o37raK47x0PKMx5K-ujiibWlE4JJbZ5WbUvo';
         const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        // ============================================================
-        // ÉLÉMENTS DOM
-        // ============================================================
         const authContainer = document.getElementById('auth-container');
         const generateBtn = document.getElementById('generate-btn');
         const cooldownTimer = document.getElementById('cooldown-timer');
@@ -240,6 +235,7 @@
         const resultError = document.getElementById('result-error');
         const copyBtn = document.getElementById('copy-btn');
         const historyBtn = document.getElementById('history-btn');
+        const historyBtnMobile = document.getElementById('history-btn-mobile');
         const historyModal = document.getElementById('history-modal');
         const historyList = document.getElementById('history-list');
         const closeHistoryBtn = document.getElementById('close-history');
@@ -248,9 +244,6 @@
         let lastAccount = null;
         let cooldownInterval = null;
 
-        // ============================================================
-        // INITIALISATION
-        // ============================================================
         async function init() {
             console.log('init démarré');
             try {
@@ -272,9 +265,6 @@
             }
         }
 
-        // ============================================================
-        // AFFICHAGE
-        // ============================================================
         function displayLoginButton() {
             authContainer.innerHTML = `<a href="/api/auth/discord/login" class="auth-btn">Se connecter avec Discord</a>`;
         }
@@ -289,7 +279,6 @@
                     <button class="auth-btn logout-btn" id="logout-btn" style="margin-left:10px;">Déconnexion</button>
                 </div>`;
             generateBtn.style.display = 'block';
-            historyBtn.style.display = 'block';
             document.getElementById('logout-btn').addEventListener('click', logout);
         }
 
@@ -298,21 +287,10 @@
             window.location.reload();
         }
 
-        // ============================================================
-        // HISTORIQUE
-        // ============================================================
-        historyBtn.addEventListener('click', () => {
-            historyModal.style.display = 'flex';
-            loadHistory();
-        });
-
-        closeHistoryBtn.addEventListener('click', () => {
-            historyModal.style.display = 'none';
-        });
-
-        historyModal.addEventListener('click', (e) => {
-            if (e.target === historyModal) historyModal.style.display = 'none';
-        });
+        historyBtn.addEventListener('click', () => { historyModal.style.display = 'flex'; loadHistory(); });
+        historyBtnMobile.addEventListener('click', () => { historyModal.style.display = 'flex'; loadHistory(); });
+        closeHistoryBtn.addEventListener('click', () => { historyModal.style.display = 'none'; });
+        historyModal.addEventListener('click', (e) => { if (e.target === historyModal) historyModal.style.display = 'none'; });
 
         async function loadHistory() {
             if (!currentUser) return;
@@ -355,9 +333,6 @@
             }
         }
 
-        // ============================================================
-        // VÉRIFICATION LIMITE
-        // ============================================================
         async function checkUserLimit() {
             if (!currentUser) return;
             try {
@@ -383,9 +358,6 @@
             }
         }
 
-        // ============================================================
-        // COOLDOWN
-        // ============================================================
         function startCooldownCheck() {
             const lastGenTime = parseInt(localStorage.getItem('last_gen_time') || '0');
             const now = Date.now();
@@ -416,9 +388,6 @@
             }, 1000);
         }
 
-        // ============================================================
-        // GÉNÉRATION
-        // ============================================================
         generateBtn.addEventListener('click', async () => {
             if (!currentUser || generateBtn.disabled) return;
 
@@ -514,9 +483,6 @@
             }
         });
 
-        // ============================================================
-        // COPIE
-        // ============================================================
         copyBtn.addEventListener('click', async () => {
             if (!lastAccount) return;
             const info = `Identifiant: ${lastAccount.username}\nMot de passe: ${lastAccount.password}`;
@@ -540,9 +506,7 @@
             resultContainer.classList.add('show');
         }
 
-        // ============================================================
-        // PARTICULES
-        // ============================================================
+        // Particules
         (function() {
             const canvas = document.getElementById('particles-canvas');
             const ctx = canvas.getContext('2d');
@@ -604,9 +568,6 @@
             animate();
         })();
 
-        // ============================================================
-        // NAVBAR
-        // ============================================================
         const navbar = document.getElementById('navbar');
         window.addEventListener('scroll', () => {
             if (window.scrollY > 20) navbar.classList.add('scrolled');

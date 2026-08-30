@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AllnGen - Administration</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        /* ============================================================
+           RESET & BASE
+           ============================================================ */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        :root {
+            --red-primary: #ff1744;
+            --red-dark: #b71c1c;
+            --bg-black: #0a0a0a;
+            --bg-card: #1a0a0a;
+        }
+        body {
+            background: #0a0a0a;
+            font-family: 'Inter', sans-serif;
+            color: #ffffff;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        ::selection { background: #ff1744; color: #fff; }
+        ::-webkit-scrollbar { width: 10px; }
+        ::-webkit-scrollbar-track { background: #0a0a0a; }
+        ::-webkit-scrollbar-thumb { background: #3a0d0d; border-radius: 5px; }
+        ::-webkit-scrollbar-thumb:hover { background: #ff1744; }
+
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .animate-fade-in-up { animation: fadeInUp 0.5s ease-out forwards; opacity: 0; }
+
+        /* ============================================================
+           LOGIN SCREEN
+           ============================================================ */
+        .login-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .login-card {
+            background: linear-gradient(135deg, rgba(26,10,10,0.8), rgba(13,13,13,0.8));
+            border: 1px solid rgba(185,28,28,0.4);
+            border-radius: 20px;
+            padding: 40px 30px;
+            max-width: 400px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(255,23,68,0.2);
+        }
+        .login-title {
+            font-size: 1.8rem;
+            font-weight: 800;
+            margin-bottom: 8px;
+        }
+        .login-title span { color: #ff1744; }
+        .login-subtitle {
+            color: #999;
+            font-size: 0.9rem;
+            margin-bottom: 24px;
+        }
+        .login-input {
+            width: 100%;
+            padding: 14px 16px;
+            background: rgba(0,0,0,0.5);
+            border: 1px solid rgba(185,28,28,0.4);
+            border-radius: 12px;
+            color: #fff;
+            font-size: 1rem;
+            font-family: 'Inter', sans-serif;
+            margin-bottom: 16px;
+            outline: none;
+            transition: all 0.3s;
+        }
+        .login-input:focus {
+            border-color: #ff1744;
+            box-shadow: 0 0 0 3px rgba(255,23,68,0.2);
+        }
+        .login-btn {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 12px;
+            background: #ff1744;
+            color: #fff;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            font-family: 'Inter', sans-serif;
+            transition: all 0.3s;
+            box-shadow: 0 8px 30px rgba(255,23,68,0.4);
+        }
+        .login-btn:hover {
+            background: #ff3355;
+            box-shadow: 0 8px 40px rgba(255,23,68,0.7);
+            transform: scale(1.02);
+        }
+        .login-error {
+            color: #ff1744;
+            font-size: 0.85rem;
+            margin-top: 12px;
+            display: none;
+        }
+
+        /* ============================================================
+           ADMIN PANEL
+           ============================================================ */
+        .admin-container {
+            display: none;
+            padding: 40px 24px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .admin-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 32px;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+        .admin-title {
+            font-size: 2rem;
+            font-weight: 800;
+        }
+        .admin-title span { color: #ff1744; }
+        .logout-btn-admin {
+            padding: 10px 20px;
+            background: #333;
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        .logout-btn-admin:hover { background: #ff1744; }
+
+        .admin-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+        .admin-card {
+            background: linear-gradient(135deg, rgba(26,10,10,0.7), rgba(13,13,13,0.7));
+            border: 1px solid rgba(185,28,28,0.3);
+            border-radius: 16px;
+            padding: 24px;
+            backdrop-filter: blur(20px);
+        }
+        .admin-card-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 16px;
+            color: #ff1744;
+        }
+        .admin-label {
+            display: block;
+            font-size: 0.85rem;
+            color: #999;
+            margin-bottom: 6px;
+        }
+        .admin-input {
+            width: 100%;
+            padding: 10px 14px;
+            background: rgba(0,0,0,0.5);
+            border: 1px solid rgba(185,28,28,0.4);
+            border-radius: 8px;
+            color: #fff;
+            font-size: 0.95rem;
+            font-family: 'Inter', sans-serif;
+            margin-bottom: 12px;
+            outline: none;
+            transition: all 0.3s;
+        }
+        .admin-input:focus {
+            border-color: #ff1744;
+            box-shadow: 0 0 0 3px rgba(255,23,68,0.2);
+        }
+        .admin-textarea {
+            width: 100%;
+            padding: 10px 14px;
+            background: rgba(0,0,0,0.5);
+            border: 1px solid rgba(185,28,28,0.4);
+            border-radius: 8px;
+            color: #fff;
+            font-size: 0.9rem;
+            font-family: 'Courier New', monospace;
+            margin-bottom: 12px;
+            outline: none;
+            min-height: 150px;
+            resize: vertical;
+            transition: all 0.3s;
+        }
+        .admin-textarea:focus {
+            border-color: #ff1744;
+            box-shadow: 0 0 0 3px rgba(255,23,68,0.2);
+        }
+        .admin-btn {
+            padding: 10px 20px;
+            background: #ff1744;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.3s;
+        }
+        .admin-btn:hover {
+            background: #ff3355;
+            box-shadow: 0 4px 20px rgba(255,23,68,0.5);
+        }
+        .admin-btn:disabled {
+            background: rgba(185,28,28,0.5);
+            cursor: not-allowed;
+        }
+        .admin-btn.secondary {
+            background: #333;
+        }
+        .admin-btn.secondary:hover {
+            background: #444;
+        }
+        .admin-stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+        .stat-box {
+            background: linear-gradient(135deg, rgba(26,10,10,0.7), rgba(13,13,13,0.7));
+            border: 1px solid rgba(185,28,28,0.3);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+        }
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 800;
+            color: #ff1744;
+        }
+        .stat-label {
+            font-size: 0.8rem;
+            color: #999;
+            margin-top: 4px;
+        }
+        .spinner {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid #fff;
+            border-top-color: transparent;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            vertical-align: middle;
+            margin-right: 6px;
+        }
+        @media (max-width: 600px) {
+            .admin-grid { grid-template-columns: 1fr; }
+            .admin-container { padding: 20px 16px; }
+            .admin-header { flex-direction: column; text-align: center; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ============================================================
+         LOGIN SCREEN
+         ============================================================ -->
+    <div class="login-container" id="login-screen">
+        <div class="login-card animate-fade-in-up">
+            <h1 class="login-title">Alln<span>Gen</span> Admin</h1>
+            <p class="login-subtitle">Accès restreint au panneau d'administration.</p>
+            <input type="password" class="login-input" id="admin-pass" placeholder="Mot de passe administrateur">
+            <button class="login-btn" id="login-btn">Se connecter</button>
+            <div class="login-error" id="login-error">Mot de passe incorrect.</div>
+        </div>
+    </div>
+
+    <!-- ============================================================
+         ADMIN PANEL
+         ============================================================ -->
+    <div class="admin-container" id="admin-panel">
+        <div class="admin-header animate-fade-in-up">
+            <h1 class="admin-title">Panneau <span>Administration</span></h1>
+            <button class="logout-btn-admin" id="admin-logout">Déconnexion</button>
+        </div>
+
+        <!-- Stats -->
+        <div class="admin-stats-grid animate-fade-in-up" style="animation-delay: 0.1s;">
+            <div class="stat-box">
+                <div class="stat-value" id="stat-total-accounts">0</div>
+                <div class="stat-label">Comptes totaux</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-value" id="stat-available-accounts">0</div>
+                <div class="stat-label">Comptes disponibles</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-value" id="stat-used-accounts">0</div>
+                <div class="stat-label">Comptes utilisés</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-value" id="stat-total-users">0</div>
+                <div class="stat-label">Utilisateurs uniques</div>
+            </div>
+        </div>
+
+        <div class="admin-grid">
+            <!-- Gestion du stock -->
+            <div class="admin-card animate-fade-in-up" style="animation-delay: 0.2s;">
+                <h2 class="admin-card-title">Gestion du stock</h2>
+                <label class="admin-label">Ajouter des comptes (format: username:password par ligne)</label>
+                <textarea class="admin-textarea" id="add-accounts-text" placeholder="user1:pass1&#10;user2:pass2&#10;user3:pass3"></textarea>
+                <button class="admin-btn" id="add-accounts-btn">Ajouter au stock</button>
+
+                <div style="margin-top:16px; border-top:1px solid rgba(185,28,28,0.2); padding-top:16px;">
+                    <label class="admin-label">Supprimer des comptes (identifiants séparés par virgule)</label>
+                    <input type="text" class="admin-input" id="remove-accounts-input" placeholder="user1,user2,user3">
+                    <button class="admin-btn secondary" id="remove-accounts-btn">Supprimer du stock</button>
+                </div>
+            </div>
+
+            <!-- Gestion du cooldown -->
+            <div class="admin-card animate-fade-in-up" style="animation-delay: 0.3s;">
+                <h2 class="admin-card-title">Gestion du cooldown</h2>
+                <label class="admin-label">ID Discord de l'utilisateur</label>
+                <input type="text" class="admin-input" id="cooldown-user-id" placeholder="ID Discord de l'utilisateur">
+                <label class="admin-label">Nouveau cooldown (en secondes, 0 pour réinitialiser)</label>
+                <input type="number" class="admin-input" id="cooldown-seconds" placeholder="30" min="0">
+                <button class="admin-btn" id="set-cooldown-btn">Appliquer le cooldown</button>
+
+                <div style="margin-top:16px; border-top:1px solid rgba(185,28,28,0.2); padding-top:16px;">
+                    <label class="admin-label">Réinitialiser la limite d'un utilisateur (autoriser une nouvelle génération)</label>
+                    <input type="text" class="admin-input" id="reset-limit-user-id" placeholder="ID Discord de l'utilisateur">
+                    <button class="admin-btn secondary" id="reset-limit-btn">Réinitialiser la limite</button>
+                </div>
+            </div>
+
+            <!-- Recherche utilisateur -->
+            <div class="admin-card animate-fade-in-up" style="animation-delay: 0.4s;">
+                <h2 class="admin-card-title">Recherche utilisateur</h2>
+                <label class="admin-label">ID Discord de l'utilisateur</label>
+                <input type="text" class="admin-input" id="search-user-id" placeholder="ID Discord">
+                <button class="admin-btn" id="search-user-btn">Rechercher</button>
+                <div id="user-info-result" style="margin-top:16px;"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ============================================================
+        // CONFIGURATION SUPABASE
+        // ============================================================
+        const SUPABASE_URL = 'https://qtuoqwqyhtbpkwzlnnjr.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF0dW9xd3F5aHRicGt3emxubmpyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgwMzQxNDMsImV4cCI6MjEwMzYxMDE0M30.nSnePp8o37raK47x0PKMx5K-ujiibWlE4JJbZ5WbUvo';
+        const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        // ============================================================
+        // ÉLÉMENTS DOM
+        // ============================================================
+        const loginScreen = document.getElementById('login-screen');
+        const adminPanel = document.getElementById('admin-panel');
+        const adminPassInput = document.getElementById('admin-pass');
+        const loginBtn = document.getElementById('login-btn');
+        const loginError = document.getElementById('login-error');
+        const adminLogoutBtn = document.getElementById('admin-logout');
+
+        // Stats
+        const statTotalAccounts = document.getElementById('stat-total-accounts');
+        const statAvailableAccounts = document.getElementById('stat-available-accounts');
+        const statUsedAccounts = document.getElementById('stat-used-accounts');
+        const statTotalUsers = document.getElementById('stat-total-users');
+
+        // Stock
+        const addAccountsText = document.getElementById('add-accounts-text');
+        const addAccountsBtn = document.getElementById('add-accounts-btn');
+        const removeAccountsInput = document.getElementById('remove-accounts-input');
+        const removeAccountsBtn = document.getElementById('remove-accounts-btn');
+
+        // Cooldown
+        const cooldownUserId = document.getElementById('cooldown-user-id');
+        const cooldownSeconds = document.getElementById('cooldown-seconds');
+        const setCooldownBtn = document.getElementById('set-cooldown-btn');
+        const resetLimitUserId = document.getElementById('reset-limit-user-id');
+        const resetLimitBtn = document.getElementById('reset-limit-btn');
+
+        // Recherche
+        const searchUserId = document.getElementById('search-user-id');
+        const searchUserBtn = document.getElementById('search-user-btn');
+        const userInfoResult = document.getElementById('user-info-result');
+
+        // ============================================================
+        // AUTHENTIFICATION ADMIN
+        // ============================================================
+        loginBtn.addEventListener('click', async () => {
+            const password = adminPassInput.value;
+            if (!password) return;
+
+            loginBtn.disabled = true;
+            loginBtn.innerHTML = '<span class="spinner"></span> Vérification...';
+
+            try {
+                const res = await fetch('/api/admin/verify', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ password })
+                });
+
+                if (res.ok) {
+                    loginScreen.style.display = 'none';
+                    adminPanel.style.display = 'block';
+                    loadStats();
+                    loginError.style.display = 'none';
+                } else {
+                    loginError.style.display = 'block';
+                }
+            } catch (e) {
+                console.error('Erreur login admin:', e);
+                loginError.textContent = 'Erreur de connexion.';
+                loginError.style.display = 'block';
+            } finally {
+                loginBtn.disabled = false;
+                loginBtn.innerHTML = 'Se connecter';
+                adminPassInput.value = '';
+            }
+        });
+
+        adminLogoutBtn.addEventListener('click', async () => {
+            try {
+                await fetch('/api/admin/logout', { credentials: 'include' });
+            } catch (e) { console.error(e); }
+            adminPanel.style.display = 'none';
+            loginScreen.style.display = 'flex';
+        });
+
+        // Vérifier la session admin au chargement
+        async function checkAdminSession() {
+            try {
+                const res = await fetch('/api/admin/verify', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ password: 'check_session' })
+                });
+                if (res.ok) {
+                    loginScreen.style.display = 'none';
+                    adminPanel.style.display = 'block';
+                    loadStats();
+                }
+            } catch (e) { /* Pas de session active */ }
+        }
+
+        // ============================================================
+        // STATISTIQUES
+        // ============================================================
+        async function loadStats() {
+            try {
+                // Comptes totaux
+                const { count: totalCount, error: totalError } = await supabaseClient
+                    .from('valorant_accounts')
+                    .select('id', { count: 'exact', head: true });
+                if (!totalError) statTotalAccounts.textContent = totalCount || 0;
+
+                // Comptes disponibles
+                const { count: availableCount, error: availableError } = await supabaseClient
+                    .from('valorant_accounts')
+                    .select('id', { count: 'exact', head: true })
+                    .eq('is_used', false);
+                if (!availableError) statAvailableAccounts.textContent = availableCount || 0;
+
+                // Comptes utilisés
+                const { count: usedCount, error: usedError } = await supabaseClient
+                    .from('valorant_accounts')
+                    .select('id', { count: 'exact', head: true })
+                    .eq('is_used', true);
+                if (!usedError) statUsedAccounts.textContent = usedCount || 0;
+
+                // Utilisateurs uniques
+                const { data: uniqueUsers, error: usersError } = await supabaseClient
+                    .from('generation_logs')
+                    .select('discord_user_id');
+                if (!usersError && uniqueUsers) {
+                    const uniqueIds = new Set(uniqueUsers.map(u => u.discord_user_id));
+                    statTotalUsers.textContent = uniqueIds.size;
+                }
+            } catch (e) {
+                console.error('Erreur stats:', e);
+            }
+        }
+
+        // ============================================================
+        // GESTION DU STOCK
+        // ============================================================
+        addAccountsBtn.addEventListener('click', async () => {
+            const text = addAccountsText.value.trim();
+            if (!text) return;
+
+            const lines = text.split('\n').filter(line => line.trim());
+            const accounts = [];
+            for (const line of lines) {
+                const parts = line.split(':');
+                if (parts.length >= 2) {
+                    accounts.push({
+                        username: parts[0].trim(),
+                        password: parts.slice(1).join(':').trim(),
+                        is_used: false
+                    });
+                }
+            }
+
+            if (accounts.length === 0) {
+                alert('Format incorrect. Utilisez username:password par ligne.');
+                return;
+            }
+
+            addAccountsBtn.disabled = true;
+            addAccountsBtn.innerHTML = '<span class="spinner"></span> Ajout...';
+
+            try {
+                const { error } = await supabaseClient
+                    .from('valorant_accounts')
+                    .insert(accounts);
+
+                if (error) throw error;
+                alert(`${accounts.length} compte(s) ajouté(s) avec succès.`);
+                addAccountsText.value = '';
+                loadStats();
+            } catch (e) {
+                console.error('Erreur ajout stock:', e);
+                alert('Erreur lors de l\'ajout des comptes.');
+            } finally {
+                addAccountsBtn.disabled = false;
+                addAccountsBtn.innerHTML = 'Ajouter au stock';
+            }
+        });
+
+        removeAccountsBtn.addEventListener('click', async () => {
+            const usernames = removeAccountsInput.value.split(',').map(u => u.trim()).filter(u => u);
+            if (usernames.length === 0) return;
+
+            if (!confirm(`Supprimer ${usernames.length} compte(s) ?`)) return;
+
+            removeAccountsBtn.disabled = true;
+            removeAccountsBtn.innerHTML = '<span class="spinner"></span> Suppression...';
+
+            try {
+                const { error } = await supabaseClient
+                    .from('valorant_accounts')
+                    .delete()
+                    .in('username', usernames);
+
+                if (error) throw error;
+                alert(`${usernames.length} compte(s) supprimé(s).`);
+                removeAccountsInput.value = '';
+                loadStats();
+            } catch (e) {
+                console.error('Erreur suppression stock:', e);
+                alert('Erreur lors de la suppression.');
+            } finally {
+                removeAccountsBtn.disabled = false;
+                removeAccountsBtn.innerHTML = 'Supprimer du stock';
+            }
+        });
+
+        // ============================================================
+        // GESTION COOLDOWN ET LIMITE
+        // ============================================================
+        setCooldownBtn.addEventListener('click', async () => {
+            const userId = cooldownUserId.value.trim();
+            const seconds = parseInt(cooldownSeconds.value);
+            if (!userId || isNaN(seconds) || seconds < 0) {
+                alert('Veuillez entrer un ID Discord valide et un cooldown en secondes (0 ou plus).');
+                return;
+            }
+
+            setCooldownBtn.disabled = true;
+            setCooldownBtn.innerHTML = '<span class="spinner"></span> Application...';
+
+            try {
+                // On stocke le cooldown personnalisé dans la table generation_logs
+                // Si seconds === 0, on réinitialise la limite
+                if (seconds === 0) {
+                    const { error } = await supabaseClient
+                        .from('generation_logs')
+                        .delete()
+                        .eq('discord_user_id', userId);
+                    if (error) throw error;
+                    alert('Limite réinitialisée pour cet utilisateur.');
+                } else {
+                    // Pour un cooldown personnalisé, on peut stocker l'info dans un localStorage côté admin,
+                    // mais ici on va ajouter un enregistrement pour bloquer temporairement
+                    alert('Cooldown appliqué. (Fonctionnalité à implémenter avec une table dédiée)');
+                }
+                loadStats();
+            } catch (e) {
+                console.error('Erreur cooldown:', e);
+                alert('Erreur lors de l\'application du cooldown.');
+            } finally {
+                setCooldownBtn.disabled = false;
+                setCooldownBtn.innerHTML = 'Appliquer le cooldown';
+            }
+        });
+
+        resetLimitBtn.addEventListener('click', async () => {
+            const userId = resetLimitUserId.value.trim();
+            if (!userId) return;
+
+            if (!confirm(`Réinitialiser la limite pour l'utilisateur ${userId} ?`)) return;
+
+            resetLimitBtn.disabled = true;
+            resetLimitBtn.innerHTML = '<span class="spinner"></span> Réinitialisation...';
+
+            try {
+                const { error } = await supabaseClient
+                    .from('generation_logs')
+                    .delete()
+                    .eq('discord_user_id', userId);
+                if (error) throw error;
+                alert('Limite réinitialisée.');
+                resetLimitUserId.value = '';
+                loadStats();
+            } catch (e) {
+                console.error('Erreur reset limite:', e);
+                alert('Erreur lors de la réinitialisation.');
+            } finally {
+                resetLimitBtn.disabled = false;
+                resetLimitBtn.innerHTML = 'Réinitialiser la limite';
+            }
+        });
+
+        // ============================================================
+        // RECHERCHE UTILISATEUR
+        // ============================================================
+        searchUserBtn.addEventListener('click', async () => {
+            const userId = searchUserId.value.trim();
+            if (!userId) return;
+
+            userInfoResult.innerHTML = '<p style="color:#999;">Recherche...</p>';
+
+            try {
+                // Récupérer les logs de l'utilisateur
+                const { data: logs, error: logsError } = await supabaseClient
+                    .from('generation_logs')
+                    .select('account_id, generated_at')
+                    .eq('discord_user_id', userId)
+                    .order('generated_at', { ascending: false });
+
+                if (logsError) throw logsError;
+
+                if (!logs || logs.length === 0) {
+                    userInfoResult.innerHTML = '<p style="color:#999;">Aucun historique pour cet utilisateur.</p>';
+                    return;
+                }
+
+                let html = `<p style="color:#fff; margin-bottom:10px;"><strong>${logs.length} génération(s)</strong></p>`;
+                for (const log of logs) {
+                    const { data: account } = await supabaseClient
+                        .from('valorant_accounts')
+                        .select('username, password')
+                        .eq('id', log.account_id)
+                        .single();
+
+                    if (account) {
+                        html += `
+                            <div style="background:#0a0a0a; border:1px solid #ff1744; border-radius:8px; padding:10px; margin-bottom:8px;">
+                                <div><strong>Identifiant:</strong> ${account.username}</div>
+                                <div><strong>Mot de passe:</strong> <span style="color:#ff1744;">${account.password}</span></div>
+                                <div style="color:#999; font-size:0.8rem;">${new Date(log.generated_at).toLocaleString()}</div>
+                            </div>
+                        `;
+                    }
+                }
+                userInfoResult.innerHTML = html;
+            } catch (e) {
+                console.error('Erreur recherche:', e);
+                userInfoResult.innerHTML = '<p style="color:#ff1744;">Erreur de recherche.</p>';
+            }
+        });
+
+        // ============================================================
+        // INITIALISATION
+        // ============================================================
+        checkAdminSession();
+    </script>
+</body>
+</html>
