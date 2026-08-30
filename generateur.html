@@ -7,9 +7,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        /* ============================================================
-           RESET & BASE
-           ============================================================ */
         * {
             margin: 0;
             padding: 0;
@@ -29,516 +26,100 @@
             min-height: 100vh;
             scroll-behavior: smooth;
         }
-        ::selection {
-            background: #ff1744;
-            color: #fff;
-        }
-        ::-webkit-scrollbar {
-            width: 10px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #0a0a0a;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #3a0d0d;
-            border-radius: 5px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #ff1744;
-        }
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        @keyframes successPop {
-            0% { transform: scale(0.8); opacity: 0; }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); opacity: 1; }
-        }
-        @keyframes errorShake {
-            0%, 100% { transform: translateX(0); }
-            10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
-            20%, 40%, 60%, 80% { transform: translateX(5px); }
-        }
-        .animate-fade-in-up {
-            animation: fadeInUp 0.8s ease-out forwards;
-            opacity: 0;
-        }
-        #particles-canvas {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 0;
-            opacity: 0.35;
-        }
-        .glow-halo {
-            position: fixed;
-            border-radius: 50%;
-            pointer-events: none;
-            z-index: 0;
-            filter: blur(80px);
-        }
-        .glow-halo-1 {
-            top: -200px;
-            left: -200px;
-            width: 600px;
-            height: 600px;
-            background: radial-gradient(circle, rgba(255,23,68,0.15) 0%, transparent 70%);
-        }
-        .glow-halo-2 {
-            bottom: -300px;
-            right: -200px;
-            width: 800px;
-            height: 800px;
-            background: radial-gradient(circle, rgba(255,23,68,0.12) 0%, transparent 70%);
-        }
-        .navbar {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            z-index: 50;
-            transition: all 0.3s ease;
-            background: transparent;
-        }
-        .navbar.scrolled {
-            background: rgba(0,0,0,0.8);
-            backdrop-filter: blur(20px);
-            border-bottom: 1px solid rgba(185,28,28,0.3);
-            box-shadow: 0 10px 30px rgba(255,23,68,0.1);
-        }
-        .navbar-inner {
-            max-width: 1280px;
-            margin: 0 auto;
-            padding: 16px 24px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-        .navbar-logo {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            text-decoration: none;
-        }
-        .navbar-logo-icon {
-            width: 40px;
-            height: 40px;
-            border-radius: 12px;
-            background: linear-gradient(135deg, #ff1744, #b71c1c);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 4px 20px rgba(255,23,68,0.3);
-            transition: all 0.3s ease;
-        }
-        .navbar-logo:hover .navbar-logo-icon {
-            transform: scale(1.1);
-            box-shadow: 0 4px 30px rgba(255,23,68,0.5);
-        }
-        .navbar-logo-icon svg {
-            width: 22px;
-            height: 22px;
-            fill: #fff;
-        }
-        .navbar-logo-text {
-            font-size: 1.5rem;
-            font-weight: 800;
-            color: #fff;
-        }
-        .navbar-logo-text span {
-            color: #ff1744;
-        }
-        .navbar-links {
-            display: flex;
-            gap: 32px;
-        }
-        .navbar-link {
-            color: #aaa;
-            text-decoration: none;
-            font-size: 0.9rem;
-            font-weight: 500;
-            transition: color 0.2s;
-            position: relative;
-        }
-        .navbar-link:hover {
-            color: #fff;
-        }
-        .navbar-link::after {
-            content: '';
-            position: absolute;
-            bottom: -4px;
-            left: 0;
-            width: 0;
-            height: 2px;
-            background: #ff1744;
-            transition: width 0.3s;
-            box-shadow: 0 0 10px #ff1744;
-        }
-        .navbar-link:hover::after {
-            width: 100%;
-        }
-        .navbar-link.active {
-            color: #ff1744;
-        }
-        .navbar-link.active::after {
-            width: 100%;
-        }
-        .navbar-cta {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            padding: 10px 24px;
-            background: #ff1744;
-            color: #fff;
-            text-decoration: none;
-            font-size: 0.9rem;
-            font-weight: 600;
-            border-radius: 10px;
-            transition: all 0.3s;
-            box-shadow: 0 4px 20px rgba(255,23,68,0.3);
-        }
-        .navbar-cta:hover {
-            background: #ff3355;
-            box-shadow: 0 4px 30px rgba(255,23,68,0.6);
-            transform: scale(1.05);
-        }
-        .navbar-burger {
-            display: none;
-            background: none;
-            border: none;
-            cursor: pointer;
-            padding: 8px;
-            border-radius: 8px;
-        }
-        .navbar-burger:hover {
-            background: rgba(255,23,68,0.1);
-        }
-        .navbar-burger svg {
-            width: 24px;
-            height: 24px;
-            stroke: #fff;
-            stroke-width: 2;
-            fill: none;
-        }
-        .navbar-mobile-menu {
-            display: none;
-            background: rgba(0,0,0,0.95);
-            backdrop-filter: blur(20px);
-            border-top: 1px solid rgba(185,28,28,0.3);
-            padding: 16px 24px;
-            flex-direction: column;
-            gap: 16px;
-        }
-        .navbar-mobile-menu.active {
-            display: flex;
-        }
-        .navbar-mobile-menu a {
-            color: #aaa;
-            text-decoration: none;
-            font-size: 0.9rem;
-        }
-        .navbar-mobile-menu a:hover {
-            color: #fff;
-        }
-        .generator-section {
-            position: relative;
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 120px 24px 60px;
-        }
-        .generator-container {
-            max-width: 550px;
-            width: 100%;
-            position: relative;
-            z-index: 10;
-        }
-        .generator-card {
-            background: linear-gradient(135deg, rgba(26,10,10,0.8), rgba(13,13,13,0.8));
-            border: 1px solid rgba(185,28,28,0.4);
-            border-radius: 24px;
-            padding: 48px 40px;
-            backdrop-filter: blur(20px);
-            box-shadow: 0 20px 60px rgba(255,23,68,0.1);
-            text-align: center;
-        }
-        .generator-icon {
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #ff1744, #b71c1c);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 24px;
-            box-shadow: 0 10px 40px rgba(255,23,68,0.4);
-            animation: pulseGlow 2s infinite alternate;
-        }
-        .generator-icon svg {
-            width: 40px;
-            height: 40px;
-            stroke: #fff;
-            stroke-width: 2;
-            fill: none;
-            stroke-linecap: round;
-            stroke-linejoin: round;
-        }
-        @keyframes pulseGlow {
-            0% { box-shadow: 0 0 20px rgba(255,23,68,0.4); }
-            100% { box-shadow: 0 0 40px rgba(255,23,68,0.8); }
-        }
-        .generator-title {
-            font-size: 2rem;
-            font-weight: 800;
-            margin-bottom: 12px;
-        }
-        .generator-subtitle {
-            color: #999;
-            font-size: 0.95rem;
-            margin-bottom: 32px;
-            line-height: 1.5;
-        }
-        .auth-container {
-            margin-bottom: 20px;
-        }
-        .auth-btn {
-            padding: 12px 24px;
-            background: #5865F2;
-            color: white;
-            border: none;
-            border-radius: 12px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-            font-family: 'Inter', sans-serif;
-            font-size: 1rem;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            box-shadow: 0 4px 15px rgba(88,101,242,0.4);
-            text-decoration: none;
-        }
-        .auth-btn:hover {
-            background: #4752c4;
-            box-shadow: 0 6px 25px rgba(88,101,242,0.6);
-            transform: scale(1.03);
-        }
-        .logout-btn {
-            background: #ff1744;
-            box-shadow: 0 4px 15px rgba(255,23,68,0.4);
-        }
-        .logout-btn:hover {
-            background: #cc0033;
-            box-shadow: 0 6px 25px rgba(255,23,68,0.6);
-        }
-        .user-info {
-            color: #999;
-            margin-bottom: 15px;
-        }
-        .user-info span {
-            color: #fff;
-            font-weight: 600;
-        }
-        .avatar {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            margin-right: 8px;
-            vertical-align: middle;
-        }
-        .generator-btn {
-            width: 100%;
-            padding: 18px;
-            border-radius: 14px;
-            border: none;
-            font-size: 1.15rem;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.3s;
-            font-family: 'Inter', sans-serif;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-            background: #ff1744;
-            color: #fff;
-            box-shadow: 0 8px 30px rgba(255,23,68,0.4);
-        }
-        .generator-btn:hover {
-            background: #ff3355;
-            transform: scale(1.02);
-        }
-        .generator-btn:active {
-            transform: scale(0.98);
-        }
-        .generator-btn:disabled {
-            background: rgba(185,28,28,0.5);
-            cursor: not-allowed;
-        }
-        .generator-btn .spinner {
-            width: 20px;
-            height: 20px;
-            border: 2px solid #fff;
-            border-top-color: transparent;
-            border-radius: 50%;
-            animation: spin 0.8s linear infinite;
-        }
-        .result-container {
-            margin-top: 32px;
-            display: none;
-        }
-        .result-container.show {
-            display: block;
-            animation: successPop 0.5s ease-out;
-        }
-        .result-box {
-            background: rgba(0,0,0,0.5);
-            border: 1px solid rgba(76,175,80,0.4);
-            border-radius: 16px;
-            padding: 24px;
-            text-align: left;
-        }
-        .result-box.error-box {
-            border-color: rgba(255,23,68,0.6);
-            animation: errorShake 0.5s ease-out;
-        }
-        .result-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 16px;
-        }
-        .result-status {
-            font-size: 0.9rem;
-            font-weight: 600;
-            color: #4caf50;
-        }
-        .result-status.error {
-            color: #ff1744;
-        }
-        .result-copy-btn {
-            padding: 8px 16px;
-            border-radius: 8px;
-            border: none;
-            font-size: 0.85rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-            background: rgba(255,255,255,0.1);
-            color: #fff;
-        }
-        .result-copy-btn:hover {
-            background: rgba(255,255,255,0.2);
-        }
-        .result-copy-btn.copied {
-            background: #4caf50;
-        }
-        .result-field {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 12px 0;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-        }
-        .result-field:last-child {
-            border-bottom: none;
-        }
-        .result-field-label {
-            font-size: 0.8rem;
-            color: #999;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-        .result-field-value {
-            font-family: monospace;
-            font-size: 1.1rem;
-            color: #fff;
-            word-break: break-all;
-            text-align: right;
-        }
-        .result-field-value.password {
-            color: #ff1744;
-            text-shadow: 0 0 10px rgba(255,23,68,0.5);
-        }
-        .result-error-message {
-            color: #ff1744;
-            font-size: 0.9rem;
-            text-align: center;
-            line-height: 1.5;
-            padding: 16px;
-            background: rgba(0,0,0,0.5);
-            border: 1px solid rgba(255,23,68,0.6);
-            border-radius: 16px;
-        }
-        .cooldown-timer {
-            color: #ff1744;
-            font-weight: 700;
-            margin-top: 8px;
-            display: none;
-        }
-        .footer {
-            position: relative;
-            padding: 48px 24px;
-            border-top: 1px solid rgba(185,28,28,0.3);
-        }
-        .footer-inner {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            gap: 16px;
-        }
-        .footer-logo {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-weight: 700;
-        }
-        .footer-logo span {
-            color: #ff1744;
-        }
-        .footer-copy {
-            color: #666;
-            font-size: 0.85rem;
-        }
-        .footer-links {
-            display: flex;
-            gap: 24px;
-        }
-        .footer-links a {
-            color: #999;
-            text-decoration: none;
-            font-size: 0.85rem;
-            transition: color 0.2s;
-        }
-        .footer-links a:hover {
-            color: #fff;
-        }
+        ::selection { background: #ff1744; color: #fff; }
+        ::-webkit-scrollbar { width: 10px; }
+        ::-webkit-scrollbar-track { background: #0a0a0a; }
+        ::-webkit-scrollbar-thumb { background: #3a0d0d; border-radius: 5px; }
+        ::-webkit-scrollbar-thumb:hover { background: #ff1744; }
+
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        @keyframes successPop { 0% { transform: scale(0.8); opacity: 0; } 50% { transform: scale(1.05); } 100% { transform: scale(1); opacity: 1; } }
+        @keyframes errorShake { 0%,100%{transform:translateX(0)} 10%,30%,50%,70%,90%{transform:translateX(-5px)} 20%,40%,60%,80%{transform:translateX(5px)} }
+        .animate-fade-in-up { animation: fadeInUp 0.8s ease-out forwards; opacity: 0; }
+
+        #particles-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; opacity: 0.35; }
+        .glow-halo { position: fixed; border-radius: 50%; pointer-events: none; z-index: 0; filter: blur(80px); }
+        .glow-halo-1 { top: -200px; left: -200px; width: 600px; height: 600px; background: radial-gradient(circle, rgba(255,23,68,0.15) 0%, transparent 70%); }
+        .glow-halo-2 { bottom: -300px; right: -200px; width: 800px; height: 800px; background: radial-gradient(circle, rgba(255,23,68,0.12) 0%, transparent 70%); }
+
+        .navbar { position: fixed; top: 0; left: 0; width: 100%; z-index: 50; transition: all 0.3s; background: transparent; }
+        .navbar.scrolled { background: rgba(0,0,0,0.8); backdrop-filter: blur(20px); border-bottom: 1px solid rgba(185,28,28,0.3); }
+        .navbar-inner { max-width: 1280px; margin: 0 auto; padding: 16px 24px; display: flex; align-items: center; justify-content: space-between; }
+        .navbar-logo { display: flex; align-items: center; gap: 12px; text-decoration: none; }
+        .navbar-logo-icon { width: 40px; height: 40px; border-radius: 12px; background: linear-gradient(135deg, #ff1744, #b71c1c); display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 20px rgba(255,23,68,0.3); }
+        .navbar-logo-icon svg { width: 22px; height: 22px; fill: #fff; }
+        .navbar-logo-text { font-size: 1.5rem; font-weight: 800; color: #fff; }
+        .navbar-logo-text span { color: #ff1744; }
+        .navbar-links { display: flex; gap: 32px; }
+        .navbar-link { color: #aaa; text-decoration: none; font-size: 0.9rem; font-weight: 500; transition: color 0.2s; position: relative; }
+        .navbar-link:hover { color: #fff; }
+        .navbar-link::after { content: ''; position: absolute; bottom: -4px; left: 0; width: 0; height: 2px; background: #ff1744; transition: width 0.3s; }
+        .navbar-link:hover::after { width: 100%; }
+        .navbar-link.active { color: #ff1744; }
+        .navbar-link.active::after { width: 100%; }
+        .navbar-cta { display: inline-flex; align-items: center; gap: 8px; padding: 10px 24px; background: #ff1744; color: #fff; text-decoration: none; font-size: 0.9rem; font-weight: 600; border-radius: 10px; transition: all 0.3s; box-shadow: 0 4px 20px rgba(255,23,68,0.3); }
+        .navbar-cta:hover { background: #ff3355; transform: scale(1.05); }
+        .navbar-burger { display: none; background: none; border: none; cursor: pointer; padding: 8px; border-radius: 8px; }
+        .navbar-burger svg { width: 24px; height: 24px; stroke: #fff; stroke-width: 2; fill: none; }
+        .navbar-mobile-menu { display: none; background: rgba(0,0,0,0.95); backdrop-filter: blur(20px); border-top: 1px solid rgba(185,28,28,0.3); padding: 16px 24px; flex-direction: column; gap: 16px; }
+        .navbar-mobile-menu.active { display: flex; }
+        .navbar-mobile-menu a { color: #aaa; text-decoration: none; font-size: 0.9rem; }
+        .navbar-mobile-menu a:hover { color: #fff; }
+
+        .generator-section { position: relative; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 120px 24px 60px; }
+        .generator-container { max-width: 550px; width: 100%; position: relative; z-index: 10; }
+        .generator-card { background: linear-gradient(135deg, rgba(26,10,10,0.8), rgba(13,13,13,0.8)); border: 1px solid rgba(185,28,28,0.4); border-radius: 24px; padding: 48px 40px; backdrop-filter: blur(20px); box-shadow: 0 20px 60px rgba(255,23,68,0.1); text-align: center; }
+        .generator-icon { width: 80px; height: 80px; border-radius: 50%; background: linear-gradient(135deg, #ff1744, #b71c1c); display: flex; align-items: center; justify-content: center; margin: 0 auto 24px; box-shadow: 0 10px 40px rgba(255,23,68,0.4); animation: pulseGlow 2s infinite alternate; }
+        .generator-icon svg { width: 40px; height: 40px; stroke: #fff; stroke-width: 2; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+        @keyframes pulseGlow { 0% { box-shadow: 0 0 20px rgba(255,23,68,0.4); } 100% { box-shadow: 0 0 40px rgba(255,23,68,0.8); } }
+        .generator-title { font-size: 2rem; font-weight: 800; margin-bottom: 12px; }
+        .generator-subtitle { color: #999; font-size: 0.95rem; margin-bottom: 32px; line-height: 1.5; }
+        .auth-container { margin-bottom: 20px; }
+        .auth-btn { padding: 12px 24px; background: #5865F2; color: white; border: none; border-radius: 12px; font-weight: 600; cursor: pointer; transition: all 0.3s; font-family: 'Inter', sans-serif; font-size: 1rem; display: inline-flex; align-items: center; gap: 8px; box-shadow: 0 4px 15px rgba(88,101,242,0.4); text-decoration: none; }
+        .auth-btn:hover { background: #4752c4; box-shadow: 0 6px 25px rgba(88,101,242,0.6); transform: scale(1.03); }
+        .logout-btn { background: #ff1744; box-shadow: 0 4px 15px rgba(255,23,68,0.4); }
+        .logout-btn:hover { background: #cc0033; box-shadow: 0 6px 25px rgba(255,23,68,0.6); }
+        .history-btn { background: #333; box-shadow: none; margin-top: 16px; }
+        .history-btn:hover { background: #444; }
+        .user-info { color: #999; margin-bottom: 15px; }
+        .user-info span { color: #fff; font-weight: 600; }
+        .avatar { width: 32px; height: 32px; border-radius: 50%; margin-right: 8px; vertical-align: middle; }
+        .generator-btn { width: 100%; padding: 18px; border-radius: 14px; border: none; font-size: 1.15rem; font-weight: 700; cursor: pointer; transition: all 0.3s; font-family: 'Inter', sans-serif; display: flex; align-items: center; justify-content: center; gap: 12px; background: #ff1744; color: #fff; box-shadow: 0 8px 30px rgba(255,23,68,0.4); }
+        .generator-btn:hover { background: #ff3355; transform: scale(1.02); }
+        .generator-btn:active { transform: scale(0.98); }
+        .generator-btn:disabled { background: rgba(185,28,28,0.5); cursor: not-allowed; }
+        .generator-btn .spinner { width: 20px; height: 20px; border: 2px solid #fff; border-top-color: transparent; border-radius: 50%; animation: spin 0.8s linear infinite; }
+        .result-container { margin-top: 32px; display: none; }
+        .result-container.show { display: block; animation: successPop 0.5s ease-out; }
+        .result-box { background: rgba(0,0,0,0.5); border: 1px solid rgba(76,175,80,0.4); border-radius: 16px; padding: 24px; text-align: left; }
+        .result-box.error-box { border-color: rgba(255,23,68,0.6); animation: errorShake 0.5s ease-out; }
+        .result-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+        .result-status { font-size: 0.9rem; font-weight: 600; color: #4caf50; }
+        .result-status.error { color: #ff1744; }
+        .result-copy-btn { padding: 8px 16px; border-radius: 8px; border: none; font-size: 0.85rem; font-weight: 600; cursor: pointer; transition: all 0.3s; background: rgba(255,255,255,0.1); color: #fff; }
+        .result-copy-btn:hover { background: rgba(255,255,255,0.2); }
+        .result-copy-btn.copied { background: #4caf50; }
+        .result-field { display: flex; align-items: center; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        .result-field:last-child { border-bottom: none; }
+        .result-field-label { font-size: 0.8rem; color: #999; text-transform: uppercase; letter-spacing: 1px; }
+        .result-field-value { font-family: monospace; font-size: 1.1rem; color: #fff; word-break: break-all; text-align: right; }
+        .result-field-value.password { color: #ff1744; text-shadow: 0 0 10px rgba(255,23,68,0.5); }
+        .result-error-message { color: #ff1744; font-size: 0.9rem; text-align: center; line-height: 1.5; padding: 16px; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,23,68,0.6); border-radius: 16px; }
+        .cooldown-timer { color: #ff1744; font-weight: 700; margin-top: 8px; display: none; }
+        .footer { position: relative; padding: 48px 24px; border-top: 1px solid rgba(185,28,28,0.3); }
+        .footer-inner { max-width: 1200px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; }
+        .footer-logo { display: flex; align-items: center; gap: 8px; font-weight: 700; }
+        .footer-logo span { color: #ff1744; }
+        .footer-copy { color: #666; font-size: 0.85rem; }
+        .footer-links { display: flex; gap: 24px; }
+        .footer-links a { color: #999; text-decoration: none; font-size: 0.85rem; transition: color 0.2s; }
+        .footer-links a:hover { color: #fff; }
         @media (max-width: 768px) {
-            .navbar-links {
-                display: none;
-            }
-            .navbar-burger {
-                display: block;
-            }
-            .generator-card {
-                padding: 32px 20px;
-            }
-            .footer-inner {
-                flex-direction: column;
-                text-align: center;
-            }
+            .navbar-links { display: none; }
+            .navbar-burger { display: block; }
+            .generator-card { padding: 32px 20px; }
+            .footer-inner { flex-direction: column; text-align: center; }
         }
     </style>
 </head>
@@ -578,7 +159,6 @@
     <section class="generator-section">
         <div class="generator-container">
             <div class="generator-card animate-fade-in-up">
-                <!-- Icône circulaire avec flèches -->
                 <div class="generator-icon">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                         <path d="M4 12a8 8 0 0 1 13.66-5.66L20 8" />
@@ -609,20 +189,23 @@
                             <span class="result-field-label">Mot de passe</span>
                             <span class="result-field-value password" id="result-password">-</span>
                         </div>
-                        <div class="result-field">
-                            <span class="result-field-label">Région</span>
-                            <span class="result-field-value" id="result-region">-</span>
-                        </div>
-                        <div class="result-field">
-                            <span class="result-field-label">Niveau</span>
-                            <span class="result-field-value" id="result-level">-</span>
-                        </div>
                     </div>
                     <div class="result-error-message" id="result-error" style="display:none;"></div>
                 </div>
+
+                <button class="generator-btn history-btn" id="history-btn" style="display:none;">📜 Historique</button>
             </div>
         </div>
     </section>
+
+    <!-- Modal Historique -->
+    <div id="history-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:100; align-items:center; justify-content:center;">
+        <div style="background:#1a1a1a; border:1px solid #ff1744; border-radius:16px; padding:20px; max-width:400px; width:90%; max-height:70vh; overflow-y:auto;">
+            <h3 style="color:#ff1744; margin-bottom:15px;">Historique des générations</h3>
+            <div id="history-list"></div>
+            <button class="auth-btn logout-btn" id="close-history" style="margin-top:15px;">Fermer</button>
+        </div>
+    </div>
 
     <footer class="footer">
         <div class="footer-inner">
@@ -637,7 +220,7 @@
 
     <script>
         // ============================================================
-        // CONFIGURATION SUPABASE (base de données)
+        // CONFIGURATION SUPABASE
         // ============================================================
         const SUPABASE_URL = 'https://qtuoqwqyhtbpkwzlnnjr.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF0dW9xd3F5aHRicGt3emxubmpyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgwMzQxNDMsImV4cCI6MjEwMzYxMDE0M30.nSnePp8o37raK47x0PKMx5K-ujiibWlE4JJbZ5WbUvo';
@@ -654,22 +237,23 @@
         const resultStatus = document.getElementById('result-status');
         const resultUsername = document.getElementById('result-username');
         const resultPassword = document.getElementById('result-password');
-        const resultRegion = document.getElementById('result-region');
-        const resultLevel = document.getElementById('result-level');
         const resultError = document.getElementById('result-error');
         const copyBtn = document.getElementById('copy-btn');
+        const historyBtn = document.getElementById('history-btn');
+        const historyModal = document.getElementById('history-modal');
+        const historyList = document.getElementById('history-list');
+        const closeHistoryBtn = document.getElementById('close-history');
 
         let currentUser = null;
         let lastAccount = null;
         let cooldownInterval = null;
 
         // ============================================================
-        // INITIALISATION (backend Vercel)
+        // INITIALISATION
         // ============================================================
         async function init() {
             console.log('init démarré');
             try {
-                // Vérifier la session via l'API backend
                 const res = await fetch('/api/auth/me', { credentials: 'include' });
                 if (res.ok) {
                     const data = await res.json();
@@ -692,11 +276,7 @@
         // AFFICHAGE
         // ============================================================
         function displayLoginButton() {
-            authContainer.innerHTML = `
-                <a href="/api/auth/discord/login" class="auth-btn">
-                    Se connecter avec Discord
-                </a>
-            `;
+            authContainer.innerHTML = `<a href="/api/auth/discord/login" class="auth-btn">Se connecter avec Discord</a>`;
         }
 
         function displayUser() {
@@ -707,23 +287,76 @@
                     <img src="${avatar}" class="avatar" alt="Avatar">
                     Connecté en tant que <span>${name}</span>
                     <button class="auth-btn logout-btn" id="logout-btn" style="margin-left:10px;">Déconnexion</button>
-                </div>
-            `;
-            document.getElementById('logout-btn').addEventListener('click', logout);
+                </div>`;
             generateBtn.style.display = 'block';
+            historyBtn.style.display = 'block';
+            document.getElementById('logout-btn').addEventListener('click', logout);
         }
 
         async function logout() {
-            try {
-                await fetch('/api/auth/logout', { credentials: 'include' });
-            } catch (e) {
-                console.error('Erreur logout:', e);
-            }
+            try { await fetch('/api/auth/logout', { credentials: 'include' }); } catch (e) { console.error(e); }
             window.location.reload();
         }
 
         // ============================================================
-        // VÉRIFICATION LIMITE UTILISATEUR
+        // HISTORIQUE
+        // ============================================================
+        historyBtn.addEventListener('click', () => {
+            historyModal.style.display = 'flex';
+            loadHistory();
+        });
+
+        closeHistoryBtn.addEventListener('click', () => {
+            historyModal.style.display = 'none';
+        });
+
+        historyModal.addEventListener('click', (e) => {
+            if (e.target === historyModal) historyModal.style.display = 'none';
+        });
+
+        async function loadHistory() {
+            if (!currentUser) return;
+            historyList.innerHTML = '<p style="color:#999;">Chargement...</p>';
+            try {
+                const { data: logs, error } = await supabaseClient
+                    .from('generation_logs')
+                    .select('account_id, generated_at')
+                    .eq('discord_user_id', currentUser.id)
+                    .order('generated_at', { ascending: false });
+
+                if (error) throw error;
+                if (!logs || logs.length === 0) {
+                    historyList.innerHTML = '<p style="color:#999;">Aucune génération trouvée.</p>';
+                    return;
+                }
+
+                historyList.innerHTML = '';
+                for (const log of logs) {
+                    const { data: account, error: accountError } = await supabaseClient
+                        .from('valorant_accounts')
+                        .select('username, password')
+                        .eq('id', log.account_id)
+                        .single();
+
+                    if (!accountError && account) {
+                        const item = document.createElement('div');
+                        item.style.cssText = 'background:#0a0a0a; border:1px solid #ff1744; border-radius:8px; padding:10px; margin-bottom:8px; text-align:left;';
+                        item.innerHTML = `
+                            <div><strong>Identifiant:</strong> ${account.username}</div>
+                            <div><strong>Mot de passe:</strong> <span style="color:#ff1744;">${account.password}</span></div>
+                            <div style="color:#999; font-size:0.8rem;">${new Date(log.generated_at).toLocaleString()}</div>
+                        `;
+                        historyList.appendChild(item);
+                    }
+                }
+            } catch (e) {
+                console.error('Erreur historique:', e);
+                historyList.innerHTML = '<p style="color:#ff1744;">Erreur de chargement.</p>';
+            }
+        }
+
+        // ============================================================
+        // VÉRIFICATION LIMITE
         // ============================================================
         async function checkUserLimit() {
             if (!currentUser) return;
@@ -733,12 +366,7 @@
                     .select('id')
                     .eq('discord_user_id', currentUser.id)
                     .limit(1);
-                if (error) {
-                    console.error('Erreur vérification limite:', error);
-                    showError('Erreur de vérification de la limite.');
-                    generateBtn.disabled = true;
-                    return;
-                }
+                if (error) throw error;
                 if (logs && logs.length > 0) {
                     generateBtn.disabled = true;
                     generateBtn.textContent = '❌ Limite atteinte (1 compte max)';
@@ -749,14 +377,14 @@
                     generateBtn.textContent = '⚡ Générer un compte';
                 }
             } catch (e) {
-                console.error('Exception checkUserLimit:', e);
-                showError('Erreur lors de la vérification de limite.');
+                console.error(e);
+                showError('Erreur de vérification de la limite.');
                 generateBtn.disabled = true;
             }
         }
 
         // ============================================================
-        // COOLDOWN 30 SECONDES
+        // COOLDOWN
         // ============================================================
         function startCooldownCheck() {
             const lastGenTime = parseInt(localStorage.getItem('last_gen_time') || '0');
@@ -789,11 +417,10 @@
         }
 
         // ============================================================
-        // GÉNÉRATION DE COMPTE
+        // GÉNÉRATION
         // ============================================================
         generateBtn.addEventListener('click', async () => {
-            if (!currentUser) return;
-            if (generateBtn.disabled) return;
+            if (!currentUser || generateBtn.disabled) return;
 
             const lastGenTime = parseInt(localStorage.getItem('last_gen_time') || '0');
             const now = Date.now();
@@ -816,7 +443,7 @@
                     return;
                 }
             } catch (e) {
-                console.error('Erreur vérification limite:', e);
+                console.error(e);
                 showError('Erreur de vérification de limite.');
                 return;
             }
@@ -828,7 +455,7 @@
             generateBtn.innerHTML = '<span class="spinner"></span> Récupération...';
 
             try {
-                const fetchResponse = await fetch(`${SUPABASE_URL}/rest/v1/valorant_accounts?is_used=eq.false&limit=1&order=created_at.asc`, {
+                const fetchResponse = await fetch(`${SUPABASE_URL}/rest/v1/valorant_accounts?is_used=eq.false&limit=1&order=id.asc`, {
                     headers: {
                         'apikey': SUPABASE_ANON_KEY,
                         'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
@@ -840,9 +467,8 @@
                     throw new Error(errorData.message || 'Erreur de récupération');
                 }
                 const accounts = await fetchResponse.json();
-                if (!accounts || accounts.length === 0) {
-                    throw new Error('Aucun compte disponible dans la base.');
-                }
+                if (!accounts || accounts.length === 0) throw new Error('Aucun compte disponible.');
+
                 const account = accounts[0];
                 lastAccount = account;
 
@@ -853,27 +479,19 @@
                         'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({ is_used: true, used_at: new Date().toISOString() })
+                    body: JSON.stringify({ is_used: true })
                 });
-                if (!updateResponse.ok) {
-                    const updateError = await updateResponse.json();
-                    throw new Error(updateError.message || 'Erreur de mise à jour');
-                }
+                if (!updateResponse.ok) throw new Error('Erreur de mise à jour.');
 
                 const { error: insertLogError } = await supabaseClient
                     .from('generation_logs')
                     .insert([{ discord_user_id: currentUser.id, account_id: account.id }]);
-
-                if (insertLogError) {
-                    console.error('Erreur enregistrement log:', insertLogError);
-                }
+                if (insertLogError) console.error('Erreur log:', insertLogError);
 
                 localStorage.setItem('last_gen_time', Date.now().toString());
 
                 resultUsername.textContent = account.username;
                 resultPassword.textContent = account.password;
-                resultRegion.textContent = account.region || 'EUW';
-                resultLevel.textContent = account.level || 'N/A';
                 resultStatus.textContent = '✓ Compte récupéré';
                 resultStatus.className = 'result-status';
                 resultBox.className = 'result-box';
@@ -887,7 +505,7 @@
                 disableWithCooldown(30);
 
             } catch (error) {
-                console.error('[AllnGen] Erreur:', error);
+                console.error(error);
                 showError(error.message);
             } finally {
                 generateBtn.disabled = false;
@@ -901,7 +519,7 @@
         // ============================================================
         copyBtn.addEventListener('click', async () => {
             if (!lastAccount) return;
-            const info = `Identifiant: ${lastAccount.username}\nMot de passe: ${lastAccount.password}\nRégion: ${lastAccount.region || 'EUW'}\nNiveau: ${lastAccount.level || 'N/A'}`;
+            const info = `Identifiant: ${lastAccount.username}\nMot de passe: ${lastAccount.password}`;
             try {
                 await navigator.clipboard.writeText(info);
                 copyBtn.textContent = '✓ Copié !';
@@ -911,7 +529,7 @@
                     copyBtn.classList.remove('copied');
                 }, 2000);
             } catch (err) {
-                alert('Copie impossible, veuillez copier manuellement.');
+                alert('Copie impossible.');
             }
         });
 
@@ -923,7 +541,7 @@
         }
 
         // ============================================================
-        // PARTICULES BACKGROUND
+        // PARTICULES
         // ============================================================
         (function() {
             const canvas = document.getElementById('particles-canvas');
@@ -981,10 +599,7 @@
                 animationFrameId = requestAnimationFrame(animate);
             }
             window.addEventListener('resize', resizeCanvas);
-            window.addEventListener('mousemove', function(e) {
-                mouseX = e.clientX;
-                mouseY = e.clientY;
-            });
+            window.addEventListener('mousemove', function(e) { mouseX = e.clientX; mouseY = e.clientY; });
             resizeCanvas();
             animate();
         })();
@@ -999,14 +614,11 @@
         });
         const burgerBtn = document.getElementById('navbar-burger');
         const mobileMenu = document.getElementById('navbar-mobile-menu');
-        burgerBtn.addEventListener('click', () => {
-            mobileMenu.classList.toggle('active');
-        });
+        burgerBtn.addEventListener('click', () => mobileMenu.classList.toggle('active'));
         mobileMenu.querySelectorAll('a').forEach(link => {
             link.addEventListener('click', () => mobileMenu.classList.remove('active'));
         });
 
-        // Lancer l'initialisation
         init();
     </script>
 </body>
