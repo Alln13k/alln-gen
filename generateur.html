@@ -637,7 +637,7 @@
 
     <script>
         // ============================================================
-        // CONFIGURATION SUPABASE
+        // CONFIGURATION SUPABASE (base de données)
         // ============================================================
         const SUPABASE_URL = 'https://qtuoqwqyhtbpkwzlnnjr.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF0dW9xd3F5aHRicGt3emxubmpyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgwMzQxNDMsImV4cCI6MjEwMzYxMDE0M30.nSnePp8o37raK47x0PKMx5K-ujiibWlE4JJbZ5WbUvo';
@@ -663,11 +663,8 @@
         let lastAccount = null;
         let cooldownInterval = null;
 
-        // URL du bouton de connexion Discord (redirection vers le backend)
-        const DISCORD_AUTH_URL = 'https://discord.com/oauth2/authorize?client_id=1543386953163083786&response_type=code&redirect_uri=https%3A%2F%2Falln-gen.vercel.app%2Fapi%2Fauth%2Fdiscord%2Fcallback&scope=identify';
-
         // ============================================================
-        // INITIALISATION
+        // INITIALISATION (backend Vercel)
         // ============================================================
         async function init() {
             console.log('init démarré');
@@ -696,7 +693,7 @@
         // ============================================================
         function displayLoginButton() {
             authContainer.innerHTML = `
-                <a href="${DISCORD_AUTH_URL}" class="auth-btn">
+                <a href="/api/auth/discord/login" class="auth-btn">
                     Se connecter avec Discord
                 </a>
             `;
@@ -704,7 +701,6 @@
 
         function displayUser() {
             const name = currentUser.global_name || currentUser.username;
-            // L'avatar est déjà une URL complète (avec extension .gif ou .png) fournie par le backend
             const avatar = currentUser.avatar || 'https://cdn.discordapp.com/embed/avatars/0.png';
             authContainer.innerHTML = `
                 <div class="user-info">
@@ -723,7 +719,6 @@
             } catch (e) {
                 console.error('Erreur logout:', e);
             }
-            // Recharger la page pour afficher le bouton de connexion
             window.location.reload();
         }
 
