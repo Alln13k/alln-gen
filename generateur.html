@@ -182,7 +182,7 @@
                     </svg>
                 </div>
                 <h1 class="generator-title">Générateur de comptes</h1>
-                <p class="generator-subtitle">Connectez-vous avec Discord pour générer un compte Valorant. Limite : 1 compte par utilisateur, cooldown 30 secondes.</p>
+                <p class="generator-subtitle">Connectez-vous avec Discord pour générer un compte.</p>
 
                 <div class="auth-container" id="auth-container"></div>
 
@@ -371,7 +371,7 @@
             const lastGenTime = parseInt(localStorage.getItem('last_gen_time') || '0');
             const now = Date.now();
             const elapsed = now - lastGenTime;
-            const cooldownMs = 30000;
+            const cooldownMs = 600000;
             if (elapsed < cooldownMs) {
                 const remaining = Math.ceil((cooldownMs - elapsed) / 1000);
                 disableWithCooldown(remaining);
@@ -402,8 +402,8 @@
 
             const lastGenTime = parseInt(localStorage.getItem('last_gen_time') || '0');
             const now = Date.now();
-            if (now - lastGenTime < 30000) {
-                const remaining = Math.ceil((30000 - (now - lastGenTime)) / 1000);
+            if (now - lastGenTime < 600000) {
+                const remaining = Math.ceil((600000 - (now - lastGenTime)) / 1000);
                 disableWithCooldown(remaining);
                 return;
             }
@@ -480,7 +480,7 @@
                 resultContainer.classList.add('show');
 
                 await checkUserLimit();
-                disableWithCooldown(30);
+                disableWithCooldown(600);
 
             } catch (error) {
                 console.error(error);
