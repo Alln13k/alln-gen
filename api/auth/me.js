@@ -1,7 +1,17 @@
 const config = require('../config');
 const crypto = require('crypto');
 
-function parseCookies(cookieHeader) { /* identique à callback */ }
+function parseCookies(cookieHeader) {
+  const cookies = {};
+  if (cookieHeader) {
+    cookieHeader.split(';').forEach(cookie => {
+      const [name, ...rest] = cookie.trim().split('=');
+      cookies[name] = rest.join('=');
+    });
+  }
+  return cookies;
+}
+
 function verifySession(token, secret) {
   const [payloadBase64, signature] = token.split('.');
   const payloadStr = Buffer.from(payloadBase64, 'base64').toString();
