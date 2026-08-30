@@ -77,6 +77,11 @@
             }
         }
 
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
         @keyframes pulse {
             0%, 100% { opacity: 1; }
             50% { opacity: 0.3; }
@@ -346,9 +351,8 @@
             margin-bottom: 24px;
             color: #ffffff;
             text-shadow: 0 0 20px rgba(255, 23, 68, 0.5);
-            animation: none;
+            animation: titleGlow 2s infinite alternate;
         }
-
         .hero-title span {
             color: #ff1744;
             text-shadow: 0 0 30px rgba(255, 23, 68, 0.7);
@@ -768,17 +772,17 @@
          ============================================================ -->
     <section class="hero" id="accueil">
         <div class="hero-inner">
-            <div class="hero-badge animate-fade-in-up">
+            <div class="hero-badge">
                 <span class="hero-badge-dot"></span>
                 <span class="hero-badge-text">Valorant • Comptes • Premium</span>
             </div>
-            <h1 class="hero-title animate-fade-in-up" style="animation-delay: 0.1s;">
+            <h1 class="hero-title">
                 Generate.<br><span>Instantly.</span>
             </h1>
-            <p class="hero-subtitle animate-fade-in-up" style="animation-delay: 0.2s;">
+            <p class="hero-subtitle">
                 Accédez à des comptes Valorant premium en un seul clic. Identifiants et mots de passe récupérés depuis notre base de données sécurisée.
             </p>
-            <div class="hero-buttons animate-fade-in-up" style="animation-delay: 0.3s;">
+            <div class="hero-buttons">
                 <a href="generateur.html" class="hero-btn-primary">
                     Générer un compte
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -789,7 +793,7 @@
                     En savoir plus
                 </a>
             </div>
-            <div class="hero-stats animate-fade-in-up" style="animation-delay: 0.4s;">
+            <div class="hero-stats">
                 <div class="hero-stat">
                     <div class="hero-stat-value">10k+</div>
                     <div class="hero-stat-label">Comptes</div>
@@ -810,33 +814,33 @@
          FEATURES SECTION
          ============================================================ -->
     <section class="section" id="fonctionnalites">
-        <div class="section-header animate-fade-in-up">
+        <div class="section-header">
             <h2 class="section-title">Fonctionnalités <span>Clés</span></h2>
             <p class="section-subtitle">Tout ce dont vous avez besoin, rien de superflu.</p>
         </div>
         <div class="features-grid">
-            <div class="feature-card animate-fade-in-up" style="animation-delay: 0s;">
+            <div class="feature-card">
                 <div class="feature-icon">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
                 </div>
                 <h3 class="feature-title">Génération rapide</h3>
                 <p class="feature-description">Récupérez instantanément un compte depuis notre base de données optimisée.</p>
             </div>
-            <div class="feature-card animate-fade-in-up" style="animation-delay: 0.1s;">
+            <div class="feature-card">
                 <div class="feature-icon">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 6h-2v9H6v2c0 .55.45 1 1 1h11l4 4V7c0-.55-.45-1-1-1zm-4 6V3c0-.55-.45-1-1-1H3c-.55 0-1 .45-1 1v14l4-4h10c.55 0 1-.45 1-1z"/></svg>
                 </div>
                 <h3 class="feature-title">Comptes Valorant</h3>
                 <p class="feature-description">Identifiants et mots de passe vérifiés pour le jeu Valorant.</p>
             </div>
-            <div class="feature-card animate-fade-in-up" style="animation-delay: 0.2s;">
+            <div class="feature-card">
                 <div class="feature-icon">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg>
                 </div>
                 <h3 class="feature-title">Base sécurisée</h3>
                 <p class="feature-description">Connexion chiffrée via Supabase. Aucune donnée sensible exposée.</p>
             </div>
-            <div class="feature-card animate-fade-in-up" style="animation-delay: 0.3s;">
+            <div class="feature-card">
                 <div class="feature-icon">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 14H4V6h16v12zM6 8h12v2H6V8zm0 4h12v2H6v-2zm0 4h8v2H6v-2z"/></svg>
                 </div>
@@ -850,12 +854,12 @@
          FAQ SECTION
          ============================================================ -->
     <section class="section" id="faq">
-        <div class="section-header animate-fade-in-up">
+        <div class="section-header">
             <h2 class="section-title">Questions <span>Fréquentes</span></h2>
             <p class="section-subtitle">Tout ce que vous devez savoir.</p>
         </div>
         <div class="faq-container">
-            <div class="faq-item open animate-fade-in-up">
+            <div class="faq-item open">
                 <button class="faq-question">
                     Comment récupérer un compte ?
                     <svg class="faq-chevron" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 9l-7 7-7-7"/></svg>
@@ -864,7 +868,7 @@
                     <p>Cliquez sur "Générer un compte" et le système récupérera automatiquement un compte disponible depuis la base de données.</p>
                 </div>
             </div>
-            <div class="faq-item animate-fade-in-up" style="animation-delay: 0.1s;">
+            <div class="faq-item">
                 <button class="faq-question">
                     Les comptes sont-ils valides ?
                     <svg class="faq-chevron" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 9l-7 7-7-7"/></svg>
@@ -873,7 +877,7 @@
                     <p>Les comptes sont vérifiés et stockés dans notre base de données sécurisée. Nous garantissons leur validité.</p>
                 </div>
             </div>
-            <div class="faq-item animate-fade-in-up" style="animation-delay: 0.2s;">
+            <div class="faq-item">
                 <button class="faq-question">
                     Combien de comptes puis-je générer ?
                     <svg class="faq-chevron" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 9l-7 7-7-7"/></svg>
@@ -882,7 +886,7 @@
                     <p>Le nombre de comptes disponibles dépend du stock en base de données. Consultez régulièrement le générateur.</p>
                 </div>
             </div>
-            <div class="faq-item animate-fade-in-up" style="animation-delay: 0.3s;">
+            <div class="faq-item">
                 <button class="faq-question">
                     Le service est-il gratuit ?
                     <svg class="faq-chevron" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 9l-7 7-7-7"/></svg>
@@ -913,7 +917,7 @@
          ============================================================ -->
     <script>
         // ============================================================
-        // PARTICULES BACKGROUND (désactivées sur mobile via CSS et JS)
+        // PARTICULES BACKGROUND (désactivées sur mobile)
         // ============================================================
         (function() {
             const isMobile = window.innerWidth < 768;
@@ -1039,23 +1043,6 @@
                     item.classList.add('open');
                 }
             });
-        });
-
-        // ============================================================
-        // ANIMATION AU SCROLL (Intersection Observer)
-        // ============================================================
-        const observer = new IntersectionObserver(function(entries) {
-            entries.forEach(function(entry) {
-                if (entry.isIntersecting) {
-                    entry.target.style.animationPlayState = 'running';
-                    observer.unobserve(entry.target);
-                }
-            });
-        }, { threshold: 0.1 });
-
-        document.querySelectorAll('.animate-fade-in-up').forEach(function(el) {
-            el.style.animationPlayState = 'paused';
-            observer.observe(el);
         });
     </script>
 </body>
