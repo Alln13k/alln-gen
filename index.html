@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AllnGen - Générateur Premium Valorant</title>
+    <title>AllnGen</title>
+    <link rel="icon" type="image/png" href="https://i.imgur.com/wC8P3AY.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
@@ -177,16 +178,15 @@
             width: 40px;
             height: 40px;
             border-radius: 12px;
-            background: linear-gradient(135deg, #ff1744, #b71c1c);
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 4px 20px rgba(255, 23, 68, 0.3);
-            transition: all 0.3s ease;
+            overflow: hidden;
+            box-shadow: none;
         }
         .navbar-logo:hover .navbar-logo-icon {
-            transform: scale(1.1);
-            box-shadow: 0 4px 30px rgba(255, 23, 68, 0.5);
+            transform: none;
+            box-shadow: none;
         }
         .navbar-logo-icon svg {
             width: 22px;
@@ -734,9 +734,7 @@
         <div class="navbar-inner">
             <a href="index.html" class="navbar-logo">
                 <div class="navbar-logo-icon">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                        <path d="M13 10V3L4 14h7v7l9-11h-7z"/>
-                    </svg>
+                    <img src="https://i.imgur.com/wC8P3AY.png" alt="Logo AllnGen" style="width: 40px; height: 40px; border-radius: 12px; object-fit: cover;">
                 </div>
                 <span class="navbar-logo-text">Alln<span>Gen</span></span>
             </a>

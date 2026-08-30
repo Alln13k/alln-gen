@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AllnGen - Générateur de comptes Valorant</title>
+    <title>AllnGen</title>
+    <link rel="icon" type="image/png" href="https://i.imgur.com/wC8P3AY.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
@@ -52,12 +53,12 @@
         .navbar.scrolled { background: rgba(0,0,0,0.8); backdrop-filter: blur(20px); border-bottom: 1px solid rgba(185,28,28,0.3); }
         .navbar-inner { max-width: 1280px; margin: 0 auto; padding: 16px 24px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; }
         .navbar-logo { display: flex; align-items: center; gap: 12px; text-decoration: none; }
-        .navbar-logo-icon { width: 40px; height: 40px; border-radius: 12px; background: linear-gradient(135deg, #ff1744, #b71c1c); display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 20px rgba(255,23,68,0.3); }
-        .navbar-logo-icon svg { width: 22px; height: 22px; fill: #fff; }
+        .navbar-logo-icon { width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; overflow: hidden; box-shadow: none; }
+        .navbar-logo-icon img { width: 100%; height: 100%; object-fit: cover; border-radius: 12px; }
         .navbar-logo-text { font-size: 1.5rem; font-weight: 800; color: #fff; }
         .navbar-logo-text span { color: #ff1744; }
-        .navbar-links { display: flex; gap: 32px; }
-        .navbar-link { color: #aaa; text-decoration: none; font-size: 0.9rem; font-weight: 500; transition: color 0.2s; position: relative; }
+        .navbar-links { display: flex; gap: 32px; align-items: center; }
+        .navbar-link { color: #aaa; text-decoration: none; font-size: 0.9rem; font-weight: 500; transition: color 0.2s; position: relative; background: none; border: none; cursor: pointer; }
         .navbar-link:hover { color: #fff; }
         .navbar-link::after { content: ''; position: absolute; bottom: -4px; left: 0; width: 0; height: 2px; background: #ff1744; transition: width 0.3s; }
         .navbar-link:hover::after { width: 100%; }
@@ -69,8 +70,8 @@
         .navbar-burger svg { width: 24px; height: 24px; stroke: #fff; stroke-width: 2; fill: none; }
         .navbar-mobile-menu { display: none; background: rgba(0,0,0,0.95); backdrop-filter: blur(20px); border-top: 1px solid rgba(185,28,28,0.3); padding: 16px 24px; flex-direction: column; gap: 16px; }
         .navbar-mobile-menu.active { display: flex; }
-        .navbar-mobile-menu a { color: #aaa; text-decoration: none; font-size: 0.9rem; }
-        .navbar-mobile-menu a:hover { color: #fff; }
+        .navbar-mobile-menu a, .navbar-mobile-menu button { color: #aaa; text-decoration: none; font-size: 0.9rem; background: none; border: none; cursor: pointer; text-align: left; }
+        .navbar-mobile-menu a:hover, .navbar-mobile-menu button:hover { color: #fff; }
 
         .generator-section { position: relative; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 120px 24px 60px; }
         .generator-container { max-width: 550px; width: 100%; position: relative; z-index: 10; }
@@ -143,7 +144,7 @@
         <div class="navbar-inner">
             <a href="index.html" class="navbar-logo">
                 <div class="navbar-logo-icon">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                    <img src="https://i.imgur.com/wC8P3AY.png" alt="Logo AllnGen">
                 </div>
                 <span class="navbar-logo-text">Alln<span>Gen</span></span>
             </a>
@@ -152,7 +153,7 @@
                 <a href="generateur.html" class="navbar-link active">Générateur</a>
                 <a href="index.html#fonctionnalites" class="navbar-link">Fonctionnalités</a>
                 <a href="index.html#faq" class="navbar-link">FAQ</a>
-                <button class="navbar-link" id="history-btn" style="background:none; border:none; cursor:pointer; color:#aaa; font-size:0.9rem;">Historique</button>
+                <button class="navbar-link" id="history-btn">Historique</button>
             </div>
             <a href="generateur.html" class="navbar-cta">Commencer</a>
             <button class="navbar-burger" id="navbar-burger">
@@ -164,14 +165,14 @@
             <a href="generateur.html">Générateur</a>
             <a href="index.html#fonctionnalites">Fonctionnalités</a>
             <a href="index.html#faq">FAQ</a>
-            <button class="navbar-link" id="history-btn-mobile" style="background:none; border:none; cursor:pointer; color:#aaa; font-size:0.9rem;">Historique</button>
+            <button class="navbar-link" id="history-btn-mobile">Historique</button>
             <a href="generateur.html" class="navbar-cta">Commencer</a>
         </div>
     </nav>
 
     <section class="generator-section">
         <div class="generator-container">
-            <div class="generator-card animate-fade-in-up">
+            <div class="generator-card">
                 <div class="generator-icon">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                         <path d="M4 12a8 8 0 0 1 13.66-5.66L20 8" />
@@ -209,7 +210,6 @@
         </div>
     </section>
 
-    <!-- Modal Historique -->
     <div id="history-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:100; align-items:center; justify-content:center;">
         <div style="background:#1a1a1a; border:1px solid #ff1744; border-radius:16px; padding:20px; max-width:400px; width:90%; max-height:70vh; overflow-y:auto;">
             <h3 style="color:#ff1744; margin-bottom:15px;">Historique des générations</h3>
@@ -592,7 +592,7 @@
         const burgerBtn = document.getElementById('navbar-burger');
         const mobileMenu = document.getElementById('navbar-mobile-menu');
         burgerBtn.addEventListener('click', () => mobileMenu.classList.toggle('active'));
-        mobileMenu.querySelectorAll('a').forEach(link => {
+        mobileMenu.querySelectorAll('a, button').forEach(link => {
             link.addEventListener('click', () => mobileMenu.classList.remove('active'));
         });
 
