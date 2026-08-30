@@ -68,15 +68,6 @@
             }
         }
 
-        @keyframes pulseGlow {
-            0%, 100% {
-                box-shadow: 0 0 20px rgba(255, 23, 68, 0.3);
-            }
-            50% {
-                box-shadow: 0 0 40px rgba(255, 23, 68, 0.6);
-            }
-        }
-
         @keyframes titleGlow {
             from {
                 text-shadow: 0 0 10px #ff0000, 0 0 20px #ff0000, 0 0 40px #ff0000, 0 0 80px #cc0000;
@@ -84,11 +75,6 @@
             to {
                 text-shadow: 0 0 15px #ff0000, 0 0 30px #ff3333, 0 0 60px #ff0000, 0 0 100px #ff4444;
             }
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
         }
 
         @keyframes pulse {
@@ -335,7 +321,7 @@
             background: rgba(185, 28, 28, 0.3);
             border: 1px solid rgba(185, 28, 28, 0.5);
             backdrop-filter: blur(10px);
-            margin-bottom: 12px;
+            margin-bottom: 28px;
         }
         .hero-badge-dot {
             width: 8px;
@@ -356,15 +342,19 @@
             font-weight: 900;
             letter-spacing: -2px;
             line-height: 1;
+            margin-top: 0;
             margin-bottom: 24px;
-            animation: titleGlow 2s infinite alternate;
+            color: #ffffff;
+            text-shadow: 0 0 20px rgba(255, 23, 68, 0.5);
+            animation: none;
         }
+
         .hero-title span {
-            background: linear-gradient(135deg, #ff1744, #ff5252, #ff1744);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            filter: drop-shadow(0 0 30px rgba(255, 23, 68, 0.5));
+            color: #ff1744;
+            text-shadow: 0 0 30px rgba(255, 23, 68, 0.7);
+            background: none;
+            -webkit-background-clip: initial;
+            -webkit-text-fill-color: currentColor;
         }
         .hero-subtitle {
             font-size: 1.25rem;
@@ -660,12 +650,10 @@
            RESPONSIVE - OPTIMISATIONS MOBILE
            ============================================================ */
         @media (max-width: 768px) {
-            /* Désactivation complète des particules */
             #particles-canvas {
                 display: none;
             }
 
-            /* Halos allégés */
             .glow-halo {
                 filter: blur(30px);
                 opacity: 0.4;
@@ -674,7 +662,6 @@
             .glow-halo-2 { width: 400px; height: 400px; bottom: -150px; right: -150px; }
             .glow-halo-3 { display: none; }
 
-            /* Désactivation des animations lourdes */
             .hero-title {
                 animation: none;
                 text-shadow: 0 0 20px rgba(255,23,68,0.5);
@@ -691,12 +678,10 @@
                 backdrop-filter: none;
             }
 
-            /* Navbar */
             .navbar-links { display: none; }
             .navbar-cta-desktop { display: none; }
             .navbar-burger { display: block; }
 
-            /* Hero */
             .hero-buttons { flex-direction: column; }
             .hero-btn-primary, .hero-btn-secondary {
                 width: 100%;
@@ -928,11 +913,11 @@
          ============================================================ -->
     <script>
         // ============================================================
-        // PARTICULES BACKGROUND (désactivées sur mobile via CSS)
+        // PARTICULES BACKGROUND (désactivées sur mobile via CSS et JS)
         // ============================================================
         (function() {
             const isMobile = window.innerWidth < 768;
-            if (isMobile) return; // Ne pas initialiser les particules sur mobile
+            if (isMobile) return;
 
             const canvas = document.getElementById('particles-canvas');
             const ctx = canvas.getContext('2d');
